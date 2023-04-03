@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">Search word</string>
+    <string name="google_name">Google</string>
+    <string name="yahoo_name">Yahoo</string>
+    <string name="twitter_name">Twitter</string>
+    <string name="youtube_name">Youtube</string>
+    <string name="reddit_name">Reddit</string>
+    <string name="wikipedia_name">Wikipedia</string>
+    <string name="amazon_name">Amazon</string>
+    <string name="ebay_name">Ebay</string>
+    <string name="pinterest_name">Pinterest</string>
+    <string name="dictionary_name">Dictionary</string>
 </resources>
