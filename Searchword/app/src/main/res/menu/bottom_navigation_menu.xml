@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_bookmark"
+        android:icon="@drawable/ic_baseline_bookmark_24"
+        android:title="@string/saved_websites_menu" />
+    <item
+        android:id="@+id/action_home"
+        android:icon="@drawable/ic_baseline_home_24"
+        android:title="@string/home_menu" />
+    <item
+        android:id="@+id/action_recent"
+        android:visible="false"
+        android:icon="@drawable/ic_baseline_settings_24"
+        android:title="@string/recent_menu" />
+</menu>

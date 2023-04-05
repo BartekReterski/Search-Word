@@ -10,4 +10,11 @@
     <string name="ebay_name">Ebay</string>
     <string name="pinterest_name">Pinterest</string>
     <string name="dictionary_name">Dictionary</string>
+    <string name="bing_name">Bing</string>
+    <string name="saved_websites_menu">Saved websites</string>
+    <string name="home_menu">Home</string>
+    <string name="recent_menu">Recent</string>
+    <string name="search_menu">Search</string>
+    <string name="save_menu">Save link</string>
+    <string name="share_menu">Share link</string>
 </resources>

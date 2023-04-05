@@ -1,0 +1,23 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".presentation.activities.MainActivity">
+    <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_baseline_search_24"
+        android:title="@string/search_menu"
+        android:iconTint="@color/black"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_save"
+        android:icon="@drawable/ic_baseline_search_24"
+        android:title="@string/save_menu"
+        android:iconTint="@color/black" />
+    <item
+        android:id="@+id/action_share"
+        android:icon="@drawable/ic_baseline_search_24"
+        android:title="@string/share_menu"
+        android:iconTint="@color/black" />
+</menu>
