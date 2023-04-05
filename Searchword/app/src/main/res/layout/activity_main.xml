@@ -7,98 +7,6 @@
     android:background="@color/background_activity_color"
     tools:context=".presentation.activities.MainActivity">
 
-    <HorizontalScrollView
-        android:id="@+id/horizontal_scroll_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:scrollbars="none"
-        android:theme="@style/Theme.MaterialComponents.Light"
-        android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <com.google.android.material.chip.ChipGroup
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:chipSpacingHorizontal="15dp"
-            app:singleLine="true"
-            app:singleSelection="true">
-
-            <com.google.android.material.chip.Chip
-                style="@style/CustomStyleChip"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/google_name" />
-
-            <com.google.android.material.chip.Chip
-                style="@style/CustomStyleChip"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/bing_name" />
-
-            <com.google.android.material.chip.Chip
-                style="@style/CustomStyleChip"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/yahoo_name" />
-
-
-            <com.google.android.material.chip.Chip
-                style="@style/CustomStyleChip"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/twitter_name" />
-
-
-            <com.google.android.material.chip.Chip
-                style="@style/CustomStyleChip"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/youtube_name" />
-
-            <com.google.android.material.chip.Chip
-                style="@style/CustomStyleChip"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/reddit_name" />
-
-            <com.google.android.material.chip.Chip
-                style="@style/CustomStyleChip"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/wikipedia_name" />
-
-            <com.google.android.material.chip.Chip
-                style="@style/CustomStyleChip"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/amazon_name" />
-
-            <com.google.android.material.chip.Chip
-                style="@style/CustomStyleChip"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/ebay_name" />
-
-            <com.google.android.material.chip.Chip
-                style="@style/CustomStyleChip"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/pinterest_name" />
-
-            <com.google.android.material.chip.Chip
-                style="@style/CustomStyleChip"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/dictionary_name" />
-
-        </com.google.android.material.chip.ChipGroup>
-    </HorizontalScrollView>
-
     <FrameLayout
         android:id="@+id/frameLayout"
         android:layout_width="0dp"
@@ -106,7 +14,7 @@
         app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/horizontal_scroll_view">
+        app:layout_constraintTop_toTopOf="parent">
 
     </FrameLayout>
 
@@ -115,11 +23,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/blue_light"
-        app:itemTextColor="@color/white"
         app:itemIconTint="@color/white"
-        app:menu="@menu/bottom_navigation_menu"
+        app:itemTextColor="@color/white"
+        app:labelVisibilityMode="unlabeled"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/bottom_navigation_menu" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
