@@ -3,11 +3,23 @@ package com.searchdirectly.searchword.presentation.fragments
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.appcompat.widget.SearchView
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.searchdirectly.searchword.R
+import com.searchdirectly.searchword.presentation.uistates.WebState
+import com.searchdirectly.searchword.presentation.viewmodels.WebSiteViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.flow.map
 
+@AndroidEntryPoint
 class HomeFragment : Fragment() {
+
+    //reference to ViewModel which is connected to this fragment
+    private val viewModel: WebSiteViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,10 +31,38 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
+        activity?.title = "Search word"
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewModel.getWebSiteInfoByName("Bing")
+        observeViewModel()
+    }
+
+    private fun observeViewModel() {
+        lifecycleScope.launchWhenStarted {
+            viewModel.webSitesUiState.distinctUntilChangedBy { it.listState }.map { it.listState }
+                .collectLatest { webState ->
+                    when (webState) {
+                        is WebState.Success -> {
+                            val website = webState.webSite
+                            Toast.makeText(
+                                context,
+                                website?.siteName + website?.url + website?.queryUrl,
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                        is WebState.Error -> {}
+                        is WebState.Loading -> {}
+                        is WebState.Empty -> {}
+                    }
+                }
+        }
+    }
+
+    @Deprecated("Deprecated in Java")
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.main_menu, menu)
         val search = menu.findItem(R.id.action_search)
@@ -30,7 +70,7 @@ class HomeFragment : Fragment() {
         searchView.queryHint = "Type phrase and choose website to search"
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                //show dialog(about search phrase), if text is not null and chipItem is selected
+                Toast.makeText(context, query, Toast.LENGTH_SHORT).show()
                 return false
             }
 
@@ -39,9 +79,10 @@ class HomeFragment : Fragment() {
                 return true
             }
         })
-        return super.onCreateOptionsMenu(menu,inflater)
+        return super.onCreateOptionsMenu(menu, inflater)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_about_app -> {

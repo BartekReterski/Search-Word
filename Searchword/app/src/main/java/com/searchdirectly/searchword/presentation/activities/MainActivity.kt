@@ -10,7 +10,9 @@ import com.searchdirectly.searchword.R
 import com.searchdirectly.searchword.databinding.ActivityMainBinding
 import com.searchdirectly.searchword.presentation.fragments.BookmarkFragment
 import com.searchdirectly.searchword.presentation.fragments.HomeFragment
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
@@ -29,10 +31,12 @@ class MainActivity : AppCompatActivity() {
             when (it.itemId) {
                 R.id.action_home -> {
                     loadFragment(HomeFragment())
+                    showIcons(true)
                     true
                 }
                 R.id.action_bookmark -> {
                     loadFragment(BookmarkFragment())
+                    showIcons(false)
                     true
                 }
                 R.id.action_share -> {
@@ -63,6 +67,19 @@ class MainActivity : AppCompatActivity() {
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.frameLayout, fragment)
         transaction.commit()
+        showIcons(true)
+    }
+
+    private fun showIcons(show: Boolean){
+        if(show){
+            binding.bottomNavigation.menu.findItem(R.id.action_share).isVisible = true
+            binding.bottomNavigation.menu.findItem(R.id.action_save).isVisible = true
+            binding.bottomNavigation.menu.findItem(R.id.action_refresh).isVisible = true
+        }else{
+            binding.bottomNavigation.menu.findItem(R.id.action_share).isVisible = false
+            binding.bottomNavigation.menu.findItem(R.id.action_save).isVisible = false
+            binding.bottomNavigation.menu.findItem(R.id.action_refresh).isVisible = false
+        }
     }
 }
 
