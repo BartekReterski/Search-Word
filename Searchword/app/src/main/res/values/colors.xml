@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="orange_700">#FF7900</color>
-    <color name="black_500">#76A5F0</color>
-    <color name="blue_light">#76A5F0</color>
+    <color name="black_500">#161F26</color>
+    <color name="blue_light">#212D39</color>
     <color name="black_700">#1E1F21</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="chip_unselected_color">#CFD8DC</color>
-    <color name="background_activity_color">#EEEEEE</color>
+    <color name="chip_unselected_color">#1B242D</color>
+    <color name="background_activity_color">#243141</color>
 </resources>

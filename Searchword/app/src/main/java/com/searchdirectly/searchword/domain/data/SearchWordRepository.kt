@@ -23,7 +23,7 @@ class SearchWordRepository @Inject constructor(): SearchWordInterface{
         list.add(WebSites("Google", "https://www.google.com/search?", "q="))
         list.add(WebSites("Bing", "https://www.bing.com/search?", "q="))
         list.add(WebSites("Yahoo", "https://search.yahoo.com/search?", "p="))
-        val website = list.find { it.equals(websiteName) }
-        return website
+        val webSite = list.find { it.siteName == websiteName }
+        return webSite
     }
 }

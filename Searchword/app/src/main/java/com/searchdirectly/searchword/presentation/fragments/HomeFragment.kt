@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.searchdirectly.searchword.R
+import com.searchdirectly.searchword.databinding.FragmentHomeBinding
 import com.searchdirectly.searchword.presentation.uistates.WebState
 import com.searchdirectly.searchword.presentation.viewmodels.WebSiteViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -18,6 +19,8 @@ import kotlinx.coroutines.flow.map
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
 
+    private var _binding: FragmentHomeBinding? = null
+    private val binding get() = _binding!!
     //reference to ViewModel which is connected to this fragment
     private val viewModel: WebSiteViewModel by viewModels()
 
@@ -30,9 +33,12 @@ class HomeFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         activity?.title = "Search word"
-        return inflater.inflate(R.layout.fragment_home, container, false)
+        // Inflate the layout for this fragment
+        _binding = FragmentHomeBinding.inflate(inflater, container, false)
+
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -60,6 +66,10 @@ class HomeFragment : Fragment() {
                     }
                 }
         }
+    }
+
+    private fun openWebViewBasedOnLinks(){
+
     }
 
     @Deprecated("Deprecated in Java")
