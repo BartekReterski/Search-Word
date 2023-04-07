@@ -14,14 +14,15 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class WebSiteViewModel @Inject constructor (private val getWebSiteByName: GetWebSiteByName) : ViewModel() {
+class WebSiteViewModel @Inject constructor(private val getWebSiteByName: GetWebSiteByName) :
+    ViewModel() {
 
     private val _webSitesUiState = MutableStateFlow(WebSitesUiState())
     val webSitesUiState: StateFlow<WebSitesUiState> = _webSitesUiState
 
     private var getWebSiteByNameJob: Job? = null
 
-    fun getWebSiteInfoByName(webSiteName: String) {
+    fun getWebsiteDataByName(webSiteName: String) {
         getWebSiteByNameJob?.cancel()
         getWebSiteByNameJob = viewModelScope.launch {
             _webSitesUiState.update {

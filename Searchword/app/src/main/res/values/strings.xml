@@ -19,4 +19,6 @@
     <string name="share_menu">Share link</string>
     <string name="about_menu">About app</string>
     <string name="todo">TODO</string>
+    <string name="tiktok_name">Tiktok</string>
+    <string name="instagram_name">Instagram</string>
 </resources>
