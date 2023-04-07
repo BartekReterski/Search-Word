@@ -43,12 +43,10 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.action_save -> {
-                    Toast.makeText(this,"Save",Toast.LENGTH_SHORT).show()
-                   // binding.bottomNavigation.menu.findItem(R.id.action_bookmark).isVisible = true
+                    Toast.makeText(this, "Save", Toast.LENGTH_SHORT).show()
                     true
                 }
                 R.id.action_refresh -> {
-                    //binding.bottomNavigation.menu.findItem(R.id.action_bookmark).isVisible = false
                     true
                 }
                 else -> {
@@ -70,12 +68,12 @@ class MainActivity : AppCompatActivity() {
         showIcons(true)
     }
 
-    private fun showIcons(show: Boolean){
-        if(show){
+    private fun showIcons(show: Boolean) {
+        if (show) {
             binding.bottomNavigation.menu.findItem(R.id.action_share).isVisible = true
             binding.bottomNavigation.menu.findItem(R.id.action_save).isVisible = true
             binding.bottomNavigation.menu.findItem(R.id.action_refresh).isVisible = true
-        }else{
+        } else {
             binding.bottomNavigation.menu.findItem(R.id.action_share).isVisible = false
             binding.bottomNavigation.menu.findItem(R.id.action_save).isVisible = false
             binding.bottomNavigation.menu.findItem(R.id.action_refresh).isVisible = false
