@@ -12,6 +12,7 @@ import com.searchdirectly.searchword.presentation.fragments.BookmarkFragment
 import com.searchdirectly.searchword.presentation.fragments.HomeFragment
 import dagger.hilt.android.AndroidEntryPoint
 
+
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
@@ -28,6 +29,7 @@ class MainActivity : AppCompatActivity() {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         loadFragment(HomeFragment())
         binding.bottomNavigation.setOnItemSelectedListener {
+            val fragment: HomeFragment = supportFragmentManager.findFragmentById(R.id.frameLayout) as HomeFragment
             when (it.itemId) {
                 R.id.action_home -> {
                     loadFragment(HomeFragment())
@@ -40,13 +42,14 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.action_share -> {
+                    fragment.shareUrl(this)
                     true
                 }
                 R.id.action_save -> {
-                    Toast.makeText(this, "Save", Toast.LENGTH_SHORT).show()
                     true
                 }
                 R.id.action_refresh -> {
+                    fragment.refreshWebView(this)
                     true
                 }
                 else -> {

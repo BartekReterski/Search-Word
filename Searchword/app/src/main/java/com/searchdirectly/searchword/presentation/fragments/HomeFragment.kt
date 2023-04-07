@@ -2,6 +2,7 @@ package com.searchdirectly.searchword.presentation.fragments
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.InputMethodManager
@@ -9,7 +10,6 @@ import android.webkit.*
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.SearchView
-import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -35,6 +35,7 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private var querySearch: String? = ""
+    private var finalUrl: String? = ""
 
     //reference to ViewModel which is connected to this fragment
     private val viewModel: WebSiteViewModel by viewModels()
@@ -68,8 +69,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupMenu() {
-        val menuHost: MenuHost = requireActivity()
-        menuHost.addMenuProvider(object : MenuProvider {
+        requireActivity().addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.main_menu, menu)
                 val search = menu.findItem(R.id.action_search)
@@ -86,7 +86,6 @@ class HomeFragment : Fragment() {
                         return true
                     }
                 })
-                //return super.onCreateOptionsMenu(menu, menuInflater)
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
@@ -99,7 +98,7 @@ class HomeFragment : Fragment() {
                     else -> false
                 }
             }
-        })
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
     private fun observeViewModel() {
@@ -131,10 +130,10 @@ class HomeFragment : Fragment() {
     private fun openWebViewBasedOnUrl(webSites: WebSites?, querySearch: String?) {
         val url = webSites?.url
         val queryUrl = webSites?.queryUrl + querySearch
-        val finalUrl = url + queryUrl
+        finalUrl = url + queryUrl
         binding.webview.webViewClient = WebViewClient()
         binding.webview.apply {
-            loadUrl(finalUrl)
+            loadUrl(finalUrl!!)
             settings.javaScriptEnabled = true
 
         }
@@ -168,20 +167,27 @@ class HomeFragment : Fragment() {
         }
     }
 
+    //BLAD ISTNIEJE DALEJ
     private fun setupChips() {
         binding.chipGroup.setOnCheckedStateChangeListener { _, _ ->
-            if (querySearch.isNullOrEmpty().not()) {
-                val selectedChipText =
-                    binding.chipGroup.findViewById<Chip>(binding.chipGroup.checkedChipId).text.toString()
-                viewModel.getWebsiteDataByName(selectedChipText)
-                binding.progressBar.visibility = View.VISIBLE
-            } else {
-                Toast.makeText(
-                    context,
-                    "Please type search phrase and try again",
-                    Toast.LENGTH_SHORT
-                ).show()
-                binding.chipGroup.clearCheck()
+            try {
+                if (querySearch.isNullOrEmpty().not()) {
+                    val selectedChipText =
+                        binding.chipGroup.findViewById<Chip>(binding.chipGroup.checkedChipId).text.toString()
+                    viewModel.getWebsiteDataByName(selectedChipText)
+                    binding.progressBar.visibility = View.VISIBLE
+                } else {
+                    Toast.makeText(
+                        context,
+                        "Please type the search phrase and try again",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    binding.chipGroup.clearCheck()
+                }
+            } catch (e: java.lang.Exception) {
+                //refreshWebView(requireContext())
+               /* Toast.makeText(context, "Somehting was wrong, please try again", Toast.LENGTH_SHORT)
+                    .show()*/
             }
         }
     }
@@ -193,12 +199,40 @@ class HomeFragment : Fragment() {
         inputMethodManager.hideSoftInputFromWindow(windowToken, 0)
     }
 
-    // TODO
-    // 1.Refactoring kodu na Menu Provider  +++
-    // 2.Dodanie reszty linkow
-    // 3.Dodanie ikon stop strony X(clear webview)
-    // 4.Dodanie mechanizmu visibility Webview  +++
-    // 5.Dodanie ikony back button <- i przeniesienie Save oraz Share do Toolbaru i tez manipulacja na jego visibilty
-    // 6. Progress bar ładowania +++
-    // 7. Naprawa tego bledu z pustym tekste podczas clicka na Chip
+    fun closeWebView(context: Context) {
+        binding.webview.visibility = View.GONE
+        //destroy VIEW
+    }
+
+    fun refreshWebView(context: Context) {
+        val url = binding.webview.url
+        binding.webview.loadUrl(url!!)
+    }
+
+    fun shareUrl(context: Context) {
+        if(finalUrl.isNullOrEmpty().not()) {
+            val shareUrl = binding.webview.url
+            val sendIntent: Intent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TEXT, shareUrl)
+                type = "text/plain"
+            }
+
+            val shareIntent = Intent.createChooser(sendIntent, null)
+            startActivity(shareIntent)
+        }else{
+            Toast.makeText(context,"Please type the search phrase and try again",Toast.LENGTH_SHORT).show()
+        }
+    }
+
 }
+
+// TODO
+// 1.Refactoring kodu na Menu Provider  +++
+// 2.Dodanie reszty linkow
+// 3.Dodanie ikon stop strony X(clear webview)
+// 4.Dodanie mechanizmu visibility Webview  +++
+// 5.Dodanie ikony back button <- i przeniesienie Save oraz Share do Toolbaru i tez manipulacja na jego visibilty
+// 6. Progress bar ładowania +++
+// 7. Naprawa tego bledu z pustym tekste podczas clicka na Chip
+
