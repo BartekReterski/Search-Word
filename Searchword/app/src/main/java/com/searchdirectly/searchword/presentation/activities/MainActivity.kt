@@ -29,7 +29,6 @@ class MainActivity : AppCompatActivity() {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         loadFragment(HomeFragment())
         binding.bottomNavigation.setOnItemSelectedListener {
-            val fragment: HomeFragment = supportFragmentManager.findFragmentById(R.id.frameLayout) as HomeFragment
             when (it.itemId) {
                 R.id.action_home -> {
                     loadFragment(HomeFragment())
@@ -42,6 +41,7 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.action_share -> {
+                    val fragment: HomeFragment = supportFragmentManager.findFragmentById(R.id.frameLayout) as HomeFragment
                     fragment.shareUrl(this)
                     true
                 }
@@ -49,6 +49,7 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.action_refresh -> {
+                    val fragment: HomeFragment = supportFragmentManager.findFragmentById(R.id.frameLayout) as HomeFragment
                     fragment.refreshWebView(this)
                     true
                 }

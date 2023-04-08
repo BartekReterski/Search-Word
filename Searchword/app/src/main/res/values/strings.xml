@@ -21,4 +21,6 @@
     <string name="todo">TODO</string>
     <string name="tiktok_name">Tiktok</string>
     <string name="instagram_name">Instagram</string>
+    <string name="no_internet_info">Something was wrong, Please check your internet connection</string>
+    <string name="what_to_do_info">Please type the search phrase and try again</string>
 </resources>

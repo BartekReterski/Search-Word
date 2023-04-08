@@ -2,8 +2,12 @@ package com.searchdirectly.searchword.presentation.fragments
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Context.CONNECTIVITY_SERVICE
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.webkit.*
@@ -19,6 +23,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.chip.Chip
 import com.searchdirectly.searchword.R
 import com.searchdirectly.searchword.databinding.FragmentHomeBinding
+import com.searchdirectly.searchword.domain.data.SearchWordRepository
 import com.searchdirectly.searchword.domain.model.WebSites
 import com.searchdirectly.searchword.presentation.uistates.WebState
 import com.searchdirectly.searchword.presentation.viewmodels.WebSiteViewModel
@@ -35,7 +40,9 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private var querySearch: String? = ""
+    private var savedCurrentSiteName: String = ""
     private var finalUrl: String? = ""
+    private val repository: SearchWordRepository? = null
 
     //reference to ViewModel which is connected to this fragment
     private val viewModel: WebSiteViewModel by viewModels()
@@ -45,10 +52,31 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         activity?.title = "Search word"
-        // Inflate the layout for this fragment
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
+
     }
+
+//    override fun onDestroyView() {
+//       super.onDestroyView()
+//       repository!!.saveStateUrl(requireContext(),finalUrl!!)
+//
+//    }
+//
+//    override fun onResume() {
+//        super.onResume()
+//        try {
+//            val restoredUrl = repository!!.getSavedUrl(requireContext())
+//            binding.webview.loadUrl(restoredUrl!!)
+//        }catch (e: java.lang.Exception){
+//
+//        }
+//    }
+//
+//    override fun onPause() {
+//        super.onPause()
+//        repository!!.saveStateUrl(requireContext(),finalUrl!!)
+//    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -117,7 +145,9 @@ class HomeFragment : Fragment() {
                                 ).show()
                                 openWebViewBasedOnUrl(website, querySearch)
                             }
-                            is WebState.Error -> {}
+                            is WebState.Error -> {
+                                Log.e("Error state", "Passing website URL")
+                            }
                             is WebState.Loading -> {}
                             is WebState.Empty -> {}
                         }
@@ -131,11 +161,14 @@ class HomeFragment : Fragment() {
         val url = webSites?.url
         val queryUrl = webSites?.queryUrl + querySearch
         finalUrl = url + queryUrl
-        binding.webview.webViewClient = WebViewClient()
-        binding.webview.apply {
-            loadUrl(finalUrl!!)
-            settings.javaScriptEnabled = true
-
+        if (isNetworkAvailable(requireContext())) {
+            binding.webview.webViewClient = WebViewClient()
+            binding.webview.apply {
+                loadUrl(finalUrl!!)
+                settings.javaScriptEnabled = true
+            }
+        } else {
+            Toast.makeText(context, R.string.no_internet_info, Toast.LENGTH_LONG).show()
         }
     }
 
@@ -174,20 +207,22 @@ class HomeFragment : Fragment() {
                 if (querySearch.isNullOrEmpty().not()) {
                     val selectedChipText =
                         binding.chipGroup.findViewById<Chip>(binding.chipGroup.checkedChipId).text.toString()
+                    if (selectedChipText == savedCurrentSiteName) {
+                        observeViewModel()
+                    }
+                    savedCurrentSiteName = selectedChipText
                     viewModel.getWebsiteDataByName(selectedChipText)
                     binding.progressBar.visibility = View.VISIBLE
                 } else {
                     Toast.makeText(
                         context,
-                        "Please type the search phrase and try again",
+                        getString(R.string.what_to_do_info),
                         Toast.LENGTH_SHORT
                     ).show()
                     binding.chipGroup.clearCheck()
                 }
             } catch (e: java.lang.Exception) {
-                //refreshWebView(requireContext())
-               /* Toast.makeText(context, "Somehting was wrong, please try again", Toast.LENGTH_SHORT)
-                    .show()*/
+                Log.e("Error catch", e.message.toString())
             }
         }
     }
@@ -210,7 +245,7 @@ class HomeFragment : Fragment() {
     }
 
     fun shareUrl(context: Context) {
-        if(finalUrl.isNullOrEmpty().not()) {
+        if (finalUrl.isNullOrEmpty().not()) {
             val shareUrl = binding.webview.url
             val sendIntent: Intent = Intent().apply {
                 action = Intent.ACTION_SEND
@@ -220,11 +255,31 @@ class HomeFragment : Fragment() {
 
             val shareIntent = Intent.createChooser(sendIntent, null)
             startActivity(shareIntent)
-        }else{
-            Toast.makeText(context,"Please type the search phrase and try again",Toast.LENGTH_SHORT).show()
+            refreshWebView(requireContext())
+        } else {
+            Toast.makeText(
+                context,
+                "Please type the search phrase and try again",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
+    private fun isNetworkAvailable(context: Context): Boolean {
+        val connectivityManager =
+            context.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
+        val nw = connectivityManager.activeNetwork ?: return false
+        val actNw = connectivityManager.getNetworkCapabilities(nw) ?: return false
+        return when {
+            actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+            actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+            //for other device how are able to connect with Ethernet
+            actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
+            //for check internet over Bluetooth
+            actNw.hasTransport(NetworkCapabilities.TRANSPORT_BLUETOOTH) -> true
+            else -> false
+        }
+    }
 }
 
 // TODO
