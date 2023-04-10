@@ -1,6 +1,5 @@
 package com.searchdirectly.searchword.presentation.activities
 
-
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -31,21 +30,23 @@ class MainActivity : AppCompatActivity() {
             when (it.itemId) {
                 R.id.action_home -> {
                     loadFragment(HomeFragment())
-                    showIcons(true)
                     true
                 }
                 R.id.action_bookmark -> {
                     //loadFragment(BookmarkFragment())
-                    showIcons(false)
                     true
                 }
-                R.id.action_share -> {
+                R.id.action_back -> {
                     val fragment: HomeFragment =
                         supportFragmentManager.findFragmentById(R.id.frameLayout) as HomeFragment
-                    fragment.shareUrl(this)
+                    fragment.backArrowButton(this)
                     true
                 }
-                R.id.action_save -> {
+                R.id.action_close_browser -> {
+                    val fragment: HomeFragment =
+                        supportFragmentManager.findFragmentById(R.id.frameLayout) as HomeFragment
+                    fragment.closeWebView(this)
+                    loadFragment(HomeFragment())
                     true
                 }
                 R.id.action_refresh -> {
@@ -70,29 +71,6 @@ class MainActivity : AppCompatActivity() {
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.frameLayout, fragment)
         transaction.commit()
-        showIcons(true)
     }
-
-    private fun showIcons(show: Boolean) {
-        if (show) {
-            binding.bottomNavigation.menu.findItem(R.id.action_share).isVisible = true
-            binding.bottomNavigation.menu.findItem(R.id.action_save).isVisible = true
-            binding.bottomNavigation.menu.findItem(R.id.action_refresh).isVisible = true
-        } else {
-            binding.bottomNavigation.menu.findItem(R.id.action_share).isVisible = false
-            binding.bottomNavigation.menu.findItem(R.id.action_save).isVisible = false
-            binding.bottomNavigation.menu.findItem(R.id.action_refresh).isVisible = false
-        }
-    }
-
-    //delete shared preferences when app is killed
-//    override fun onDestroy() {
-//        super.onDestroy()
-//        if (!isFinishing){
-//            val sharedPref = getSharedPreferences(getString(R.string.Shared_pref_id), Context.MODE_PRIVATE)
-//            sharedPref.edit().clear().apply()
-//        }
-//
-//    }
 }
 
