@@ -64,8 +64,7 @@ class HomeFragment : Fragment() {
         super.onResume()
         try {
             viewModel.getSavedSharedPreferencesUrl()
-            val sharedPref = requireContext().getSharedPreferences("myPref", Context.MODE_PRIVATE)
-            sharedPref?.edit()?.clear()?.apply()
+            binding.webview.loadUrl(finalUrl!!)
         } catch (e: java.lang.Exception) {
             Log.e(
                 "Shared_Preferences_Error",
@@ -180,7 +179,7 @@ class HomeFragment : Fragment() {
                                 val savedUrl = sharedPreferences.url
                                 if(savedUrl.isNullOrEmpty().not()){
                                     finalUrl = savedUrl
-                                    binding.webview.loadUrl(savedUrl!!)
+                                    //binding.webview.loadUrl(savedUrl!!)
                                 }
                                 Toast.makeText(
                                     context,
