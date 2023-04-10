@@ -57,13 +57,15 @@ class HomeFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        viewModel.saveSharedPreferencesUrl(binding.webview.url!!)
+        //viewModel.saveSharedPreferencesUrl(binding.webview.url!!)
     }
 
     override fun onResume() {
         super.onResume()
         try {
             viewModel.getSavedSharedPreferencesUrl()
+            val sharedPref = requireContext().getSharedPreferences("myPref", Context.MODE_PRIVATE)
+            sharedPref?.edit()?.clear()?.apply()
         } catch (e: java.lang.Exception) {
             Log.e(
                 "Shared_Preferences_Error",
@@ -174,9 +176,12 @@ class HomeFragment : Fragment() {
                     .collectLatest { sharedPreferences ->
                         when (sharedPreferences) {
                             is SharedPreferencesState.Success -> {
+                                // JEST PUSTY SH LUB ZATRZYMUJE OSTATNIA WARTOSC -PROBLEM
                                 val savedUrl = sharedPreferences.url
-                                finalUrl = savedUrl
-                                binding.webview.loadUrl(savedUrl!!)
+                                if(savedUrl.isNullOrEmpty().not()){
+                                    finalUrl = savedUrl
+                                    binding.webview.loadUrl(savedUrl!!)
+                                }
                                 Toast.makeText(
                                     context,
                                     savedUrl,
