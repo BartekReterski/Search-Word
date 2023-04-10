@@ -1,4 +1,4 @@
-package com.searchdirectly.searchword.presentation.usecases
+package com.searchdirectly.searchword.presentation.usecases.websites
 
 import com.searchdirectly.searchword.domain.data.SearchWordRepository
 import com.searchdirectly.searchword.domain.model.WebSites
