@@ -43,7 +43,6 @@ class HomeFragment : Fragment() {
     private var savedCurrentSiteName: String = ""
     private var finalUrl: String? = ""
 
-    //reference to ViewModel which is connected to this fragment
     private val viewModel: WebSiteViewModel by viewModels()
 
     override fun onCreateView(
@@ -55,6 +54,7 @@ class HomeFragment : Fragment() {
         //viewModel.getSavedSharedPreferencesUrl()
         return binding.root
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         viewModel.saveSharedPreferencesUrl(binding.webview.url!!)
@@ -85,16 +85,6 @@ class HomeFragment : Fragment() {
         preventBackButton()
     }
 
-    private fun preventBackButton() {
-        requireActivity().onBackPressedDispatcher.addCallback(
-            viewLifecycleOwner,
-            object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    if (binding.webview.canGoBack()) binding.webview.goBack()
-                }
-            })
-    }
-
     private fun setupMenu() {
         requireActivity().addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -117,8 +107,17 @@ class HomeFragment : Fragment() {
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
-                    R.id.action_about_app -> {
+                    R.id.action_about -> {
                         Toast.makeText(requireContext(), "Item 1 selected", Toast.LENGTH_SHORT)
+                            .show()
+                        true
+                    }
+                    R.id.action_share -> {
+                        shareUrl()
+                        true
+                    }
+                    R.id.action_save -> {
+                        Toast.makeText(requireContext(), "Item 3 selected", Toast.LENGTH_SHORT)
                             .show()
                         true
                     }
@@ -206,8 +205,15 @@ class HomeFragment : Fragment() {
                 loadUrl(finalUrl!!)
                 settings.javaScriptEnabled = true
             }
+            binding.webview.webChromeClient = WebChromeClient()
         } else {
             Toast.makeText(context, R.string.no_internet_info, Toast.LENGTH_LONG).show()
+        }
+    }
+
+    inner class WebChromeClient : android.webkit.WebChromeClient() {
+        override fun onProgressChanged(view: WebView?, newProgress: Int) {
+            binding.progressBarHorizontal.setProgress(newProgress, true)
         }
     }
 
@@ -217,6 +223,7 @@ class HomeFragment : Fragment() {
         // Load the URL
         @Deprecated("Deprecated in Java")
         override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
+            binding.progressBarHorizontal.visibility = View.VISIBLE
             view.loadUrl(url)
             return false
         }
@@ -226,20 +233,21 @@ class HomeFragment : Fragment() {
             request: WebResourceRequest
         ): Boolean {
             val uri = request.url
+            binding.progressBarHorizontal.visibility = View.VISIBLE
             view?.loadUrl(uri.toString())
             return false
         }
 
+
         // ProgressBar will disappear once page is loaded
         override fun onPageFinished(view: WebView, url: String) {
             super.onPageFinished(view, url)
-            binding.progressBar.visibility = View.GONE
+            binding.progressBarHorizontal.visibility = View.GONE
             binding.webview.visibility = View.VISIBLE
             view.hideSoftInput()
         }
     }
 
-    //BLAD ISTNIEJE DALEJ
     private fun setupChips() {
         binding.chipGroup.setOnCheckedStateChangeListener { _, _ ->
             try {
@@ -251,7 +259,7 @@ class HomeFragment : Fragment() {
                     }
                     savedCurrentSiteName = selectedChipText
                     viewModel.getWebsiteDataByName(selectedChipText)
-                    binding.progressBar.visibility = View.VISIBLE
+                    binding.progressBarHorizontal.visibility = View.VISIBLE
                 } else {
                     Toast.makeText(
                         context,
@@ -275,15 +283,15 @@ class HomeFragment : Fragment() {
 
     fun closeWebView(context: Context) {
         binding.webview.visibility = View.GONE
-        //destroy VIEW
     }
 
     fun refreshWebView(context: Context) {
+        binding.progressBarHorizontal.visibility = View.VISIBLE
         val url = binding.webview.url
         binding.webview.loadUrl(url!!)
     }
 
-    fun shareUrl(context: Context) {
+    fun shareUrl() {
         if (finalUrl.isNullOrEmpty().not()) {
             val shareUrl = binding.webview.url
             val sendIntent: Intent = Intent().apply {
@@ -304,6 +312,20 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private fun preventBackButton() {
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (binding.webview.canGoBack()) binding.webview.goBack()
+                }
+            })
+    }
+
+    fun backArrowButton(context: Context) {
+        if (binding.webview.canGoBack()) binding.webview.goBack()
+    }
+
     private fun isNetworkAvailable(context: Context): Boolean {
         val connectivityManager =
             context.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -320,13 +342,3 @@ class HomeFragment : Fragment() {
         }
     }
 }
-
-// TODO
-// 1.Refactoring kodu na Menu Provider  +++
-// 2.Dodanie reszty linkow
-// 3.Dodanie ikon stop strony X(clear webview)
-// 4.Dodanie mechanizmu visibility Webview  +++
-// 5.Dodanie ikony back button <- i przeniesienie Save oraz Share do Toolbaru i tez manipulacja na jego visibilty
-// 6. Progress bar ładowania +++
-// 7. Naprawa tego bledu z pustym tekste podczas clicka na Chip
-
