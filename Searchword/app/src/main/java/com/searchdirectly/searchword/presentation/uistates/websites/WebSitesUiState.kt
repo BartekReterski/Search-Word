@@ -1,10 +1,9 @@
-package com.searchdirectly.searchword.presentation.uistates
+package com.searchdirectly.searchword.presentation.uistates.websites
 
 import com.searchdirectly.searchword.domain.model.WebSites
 
 data class WebSitesUiState(
     val listState: WebState = WebState.Empty,
-    //val showedRemoveMessage: Boolean = false
 )
 
 sealed class WebState {

@@ -23,9 +23,9 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.chip.Chip
 import com.searchdirectly.searchword.R
 import com.searchdirectly.searchword.databinding.FragmentHomeBinding
-import com.searchdirectly.searchword.domain.data.SearchWordRepository
 import com.searchdirectly.searchword.domain.model.WebSites
-import com.searchdirectly.searchword.presentation.uistates.WebState
+import com.searchdirectly.searchword.presentation.uistates.preferences.SharedPreferencesState
+import com.searchdirectly.searchword.presentation.uistates.websites.WebState
 import com.searchdirectly.searchword.presentation.viewmodels.WebSiteViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -42,7 +42,6 @@ class HomeFragment : Fragment() {
     private var querySearch: String? = ""
     private var savedCurrentSiteName: String = ""
     private var finalUrl: String? = ""
-    private val repository: SearchWordRepository? = null
 
     //reference to ViewModel which is connected to this fragment
     private val viewModel: WebSiteViewModel by viewModels()
@@ -53,30 +52,30 @@ class HomeFragment : Fragment() {
     ): View {
         activity?.title = "Search word"
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        //viewModel.getSavedSharedPreferencesUrl()
         return binding.root
-
+    }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        viewModel.saveSharedPreferencesUrl(binding.webview.url!!)
     }
 
-//    override fun onDestroyView() {
-//       super.onDestroyView()
-//       repository!!.saveStateUrl(requireContext(),finalUrl!!)
-//
-//    }
-//
-//    override fun onResume() {
-//        super.onResume()
-//        try {
-//            val restoredUrl = repository!!.getSavedUrl(requireContext())
-//            binding.webview.loadUrl(restoredUrl!!)
-//        }catch (e: java.lang.Exception){
-//
-//        }
-//    }
-//
-//    override fun onPause() {
-//        super.onPause()
-//        repository!!.saveStateUrl(requireContext(),finalUrl!!)
-//    }
+    override fun onResume() {
+        super.onResume()
+        try {
+            viewModel.getSavedSharedPreferencesUrl()
+        } catch (e: java.lang.Exception) {
+            Log.e(
+                "Shared_Preferences_Error",
+                "Error regarding to save url address in Shared Preferences"
+            )
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        viewModel.saveSharedPreferencesUrl(binding.webview.url!!)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -130,6 +129,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun observeViewModel() {
+        //observe Website data from repository
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.webSitesUiState.distinctUntilChangedBy { it.listState }
@@ -150,6 +150,45 @@ class HomeFragment : Fragment() {
                             }
                             is WebState.Loading -> {}
                             is WebState.Empty -> {}
+                        }
+                    }
+            }
+        }
+        //observe saved url to shared preferences
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.sharedPreferencesUiState.distinctUntilChangedBy { it.showedSharedPreferencesAddedMessage }
+                    .collectLatest {
+                        if (it.showedSharedPreferencesAddedMessage) {
+                            Toast.makeText(context, "Saved SP", Toast.LENGTH_SHORT).show()
+                            viewModel.addedMessageInfo()
+                        }
+                    }
+
+            }
+        }
+        //observe getting url from shared preferences
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.sharedPreferencesUiState.distinctUntilChangedBy { it.sharedPreferenceState }
+                    .map { it.sharedPreferenceState }
+                    .collectLatest { sharedPreferences ->
+                        when (sharedPreferences) {
+                            is SharedPreferencesState.Success -> {
+                                val savedUrl = sharedPreferences.url
+                                finalUrl = savedUrl
+                                binding.webview.loadUrl(savedUrl!!)
+                                Toast.makeText(
+                                    context,
+                                    savedUrl,
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+                            is SharedPreferencesState.Error -> {
+                                Log.e("Error state", "Getting URL from shared preferences")
+                            }
+                            is SharedPreferencesState.Loading -> {}
+                            is SharedPreferencesState.Empty -> {}
                         }
                     }
             }

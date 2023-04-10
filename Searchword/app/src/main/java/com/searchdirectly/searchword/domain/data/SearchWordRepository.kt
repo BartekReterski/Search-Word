@@ -5,9 +5,11 @@ import android.content.SharedPreferences
 import com.searchdirectly.searchword.domain.model.WebSites
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
+import javax.inject.Singleton
 
-
-class SearchWordRepository @Inject constructor(@ApplicationContext val context: Context) : SearchWordInterface{
+@Singleton
+class SearchWordRepository @Inject constructor(@ApplicationContext val context: Context) :
+    SearchWordInterface {
 
     override suspend fun getWebSite(websiteName: String): WebSites? {
         val list = mutableListOf<WebSites>()
@@ -17,14 +19,16 @@ class SearchWordRepository @Inject constructor(@ApplicationContext val context: 
         return list.find { it.siteName == websiteName }
     }
 
-    override fun saveStateUrl(context: Context,url: String) {
-        val sharedPreferences: SharedPreferences = context.getSharedPreferences("MySharedPref", Context.MODE_PRIVATE)
+    override suspend fun saveStateUrl(url: String): Boolean {
+        val sharedPreferences: SharedPreferences =
+            context.getSharedPreferences("MySharedPref", Context.MODE_PRIVATE)
         val myEdit = sharedPreferences.edit()
         myEdit.putString("url", url)
         myEdit.apply()
+        return true
     }
 
-    override fun getSavedUrl(context: Context): String? {
+    override suspend fun getSavedUrl(): String? {
         val sh: SharedPreferences =
             context.getSharedPreferences("MySharedPref", Context.MODE_PRIVATE)
         return sh.getString("url", "")

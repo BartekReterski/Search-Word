@@ -8,7 +8,6 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import com.searchdirectly.searchword.R
 import com.searchdirectly.searchword.databinding.ActivityMainBinding
-import com.searchdirectly.searchword.presentation.fragments.BookmarkFragment
 import com.searchdirectly.searchword.presentation.fragments.HomeFragment
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -36,12 +35,13 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.action_bookmark -> {
-                    loadFragment(BookmarkFragment())
+                    //loadFragment(BookmarkFragment())
                     showIcons(false)
                     true
                 }
                 R.id.action_share -> {
-                    val fragment: HomeFragment = supportFragmentManager.findFragmentById(R.id.frameLayout) as HomeFragment
+                    val fragment: HomeFragment =
+                        supportFragmentManager.findFragmentById(R.id.frameLayout) as HomeFragment
                     fragment.shareUrl(this)
                     true
                 }
@@ -49,7 +49,8 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.action_refresh -> {
-                    val fragment: HomeFragment = supportFragmentManager.findFragmentById(R.id.frameLayout) as HomeFragment
+                    val fragment: HomeFragment =
+                        supportFragmentManager.findFragmentById(R.id.frameLayout) as HomeFragment
                     fragment.refreshWebView(this)
                     true
                 }
@@ -83,5 +84,15 @@ class MainActivity : AppCompatActivity() {
             binding.bottomNavigation.menu.findItem(R.id.action_refresh).isVisible = false
         }
     }
+
+    //delete shared preferences when app is killed
+//    override fun onDestroy() {
+//        super.onDestroy()
+//        if (!isFinishing){
+//            val sharedPref = getSharedPreferences(getString(R.string.Shared_pref_id), Context.MODE_PRIVATE)
+//            sharedPref.edit().clear().apply()
+//        }
+//
+//    }
 }
 
