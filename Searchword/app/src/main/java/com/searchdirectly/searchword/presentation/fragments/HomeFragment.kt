@@ -96,6 +96,10 @@ class HomeFragment : Fragment() {
                 searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                     override fun onQueryTextSubmit(query: String?): Boolean {
                         querySearch = query
+                        if(querySearch.isNullOrEmpty().not()){
+                            viewModel.getWebsiteDataByName(savedCurrentSiteName)
+                            observeViewModel()
+                        }
                         return false
                     }
 
@@ -175,7 +179,6 @@ class HomeFragment : Fragment() {
                     .collectLatest { sharedPreferences ->
                         when (sharedPreferences) {
                             is SharedPreferencesState.Success -> {
-                                // JEST PUSTY SH LUB ZATRZYMUJE OSTATNIA WARTOSC -PROBLEM
                                 val savedUrl = sharedPreferences.url
                                 if(savedUrl.isNullOrEmpty().not()){
                                     finalUrl = savedUrl
@@ -224,7 +227,6 @@ class HomeFragment : Fragment() {
     // Overriding WebViewClient functions
     inner class WebViewClient : android.webkit.WebViewClient() {
 
-        // Load the URL
         @Deprecated("Deprecated in Java")
         override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
             binding.progressBarHorizontal.visibility = View.VISIBLE
@@ -241,7 +243,6 @@ class HomeFragment : Fragment() {
             view?.loadUrl(uri.toString())
             return false
         }
-
 
         // ProgressBar will disappear once page is loaded
         override fun onPageFinished(view: WebView, url: String) {
@@ -310,12 +311,13 @@ class HomeFragment : Fragment() {
         } else {
             Toast.makeText(
                 context,
-                "Please type the search phrase and try again",
+                R.string.what_to_do_info,
                 Toast.LENGTH_SHORT
             ).show()
         }
     }
 
+    //device - back button
     private fun preventBackButton() {
         requireActivity().onBackPressedDispatcher.addCallback(
             viewLifecycleOwner,
@@ -326,6 +328,7 @@ class HomeFragment : Fragment() {
             })
     }
 
+    //icon back button on bottom navigation bar
     fun backArrowButton(context: Context) {
         if (binding.webview.canGoBack()) binding.webview.goBack()
     }
