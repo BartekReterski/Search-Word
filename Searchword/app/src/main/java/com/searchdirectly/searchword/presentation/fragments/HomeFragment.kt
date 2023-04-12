@@ -51,13 +51,7 @@ class HomeFragment : Fragment() {
     ): View {
         activity?.title = "Search word"
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
-        //viewModel.getSavedSharedPreferencesUrl()
         return binding.root
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        //viewModel.saveSharedPreferencesUrl(binding.webview.url!!)
     }
 
     override fun onResume() {
@@ -65,6 +59,10 @@ class HomeFragment : Fragment() {
         try {
             viewModel.getSavedSharedPreferencesUrl()
             binding.webview.loadUrl(finalUrl!!)
+            getBundleFlag()
+//            if(getBundleFlag()){
+//                binding.webview.visibility = View.VISIBLE
+//            }
 
         } catch (e: java.lang.Exception) {
             Log.e(
@@ -332,6 +330,17 @@ class HomeFragment : Fragment() {
     //icon back button on bottom navigation bar
     fun backArrowButton(context: Context) {
         if (binding.webview.canGoBack()) binding.webview.goBack()
+    }
+
+    private fun getBundleFlag() {
+        if (arguments != null) {
+            val str1 = arguments!!.getString("ARG_NAME");
+        }
+        val bundle = arguments
+        val message = bundle!!.getString("SavedWebsiteActivity")
+        val message2 = bundle!!.getString("SavedWebsiteActivity")
+     /*   val value = requireArguments().getBoolean("SavedWebsiteActivity")
+        return requireArguments().getBoolean("SavedWebsiteActivity")*/
     }
 
     private fun isNetworkAvailable(context: Context): Boolean {
