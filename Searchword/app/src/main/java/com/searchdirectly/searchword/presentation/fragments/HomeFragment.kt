@@ -92,7 +92,7 @@ class HomeFragment : Fragment() {
                 menuInflater.inflate(R.menu.main_menu, menu)
                 val search = menu.findItem(R.id.action_search)
                 val searchView = search?.actionView as SearchView
-                searchView.queryHint = "Type phrase and choose website to search"
+                searchView.queryHint = getString(R.string.search_query_hint)
                 searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                     override fun onQueryTextSubmit(query: String?): Boolean {
                         querySearch = query

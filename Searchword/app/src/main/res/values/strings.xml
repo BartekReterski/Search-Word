@@ -1,5 +1,22 @@
 <resources>
     <string name="app_name">Search word</string>
+    //menu items
+    <string name="saved_websites_menu">Saved websites</string>
+    <string name="home_menu">Home</string>
+    <string name="refresh_menu">Refresh</string>
+    <string name="search_menu">Search</string>
+    <string name="save_menu">Save link</string>
+    <string name="share_menu">Share link</string>
+    <string name="about_menu">About app</string>
+    <string name="more_menu">More</string>
+    //app info
+    <string name="saved_back_action_menu">Back</string>
+    <string name="todo">TODO</string>
+    <string name="no_internet_info">Something was wrong, Please check your internet connection</string>
+    <string name="what_to_do_info">Please type the search phrase and try again</string>
+    <string name="Shared_pref_id">MySharedPref</string>
+    <string name="close_website_menu">Close website</string>
+    //websites names
     <string name="google_name">Google</string>
     <string name="yahoo_name">Yahoo</string>
     <string name="twitter_name">Twitter</string>
@@ -11,20 +28,8 @@
     <string name="pinterest_name">Pinterest</string>
     <string name="dictionary_name">Dictionary</string>
     <string name="bing_name">Bing</string>
-    <string name="saved_websites_menu">Saved websites</string>
-    <string name="home_menu">Home</string>
-    <string name="refresh_menu">Refresh</string>
-    <string name="search_menu">Search</string>
-    <string name="save_menu">Save link</string>
-    <string name="share_menu">Share link</string>
-    <string name="about_menu">About app</string>
-    <string name="todo">TODO</string>
     <string name="tiktok_name">Tiktok</string>
     <string name="instagram_name">Instagram</string>
-    <string name="no_internet_info">Something was wrong, Please check your internet connection</string>
-    <string name="what_to_do_info">Please type the search phrase and try again</string>
-    <string name="Shared_pref_id">MySharedPref</string>
-    <string name="more_menu">More</string>
-    <string name="saved_back_action_menu">Back</string>
-    <string name="close_website_menu">Close website</string>
+    <string name="search_query_hint">Type phrase and choose website to search</string>
+    <string name="yandex_name">Yandex</string>
 </resources>
