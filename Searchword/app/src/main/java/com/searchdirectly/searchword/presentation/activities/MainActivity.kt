@@ -1,5 +1,6 @@
 package com.searchdirectly.searchword.presentation.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -33,7 +34,8 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.action_bookmark -> {
-                    //loadFragment(BookmarkFragment())
+                    val intent = Intent(this, SavedWebsitesActivity::class.java)
+                    startActivity(intent)
                     true
                 }
                 R.id.action_back -> {

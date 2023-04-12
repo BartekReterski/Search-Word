@@ -65,6 +65,7 @@ class HomeFragment : Fragment() {
         try {
             viewModel.getSavedSharedPreferencesUrl()
             binding.webview.loadUrl(finalUrl!!)
+
         } catch (e: java.lang.Exception) {
             Log.e(
                 "Shared_Preferences_Error",
@@ -96,7 +97,7 @@ class HomeFragment : Fragment() {
                 searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                     override fun onQueryTextSubmit(query: String?): Boolean {
                         querySearch = query
-                        if(querySearch.isNullOrEmpty().not()){
+                        if (querySearch.isNullOrEmpty().not()) {
                             viewModel.getWebsiteDataByName(savedCurrentSiteName)
                             observeViewModel()
                         }
@@ -180,7 +181,7 @@ class HomeFragment : Fragment() {
                         when (sharedPreferences) {
                             is SharedPreferencesState.Success -> {
                                 val savedUrl = sharedPreferences.url
-                                if(savedUrl.isNullOrEmpty().not()){
+                                if (savedUrl.isNullOrEmpty().not()) {
                                     finalUrl = savedUrl
                                     //binding.webview.loadUrl(savedUrl!!)
                                 }
