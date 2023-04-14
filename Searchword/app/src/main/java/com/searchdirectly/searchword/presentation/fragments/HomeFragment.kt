@@ -92,7 +92,7 @@ class HomeFragment : Fragment() {
                     override fun onQueryTextSubmit(query: String?): Boolean {
                         querySearch = query
                         //TRZEBA DAC OR CHIP NIE JEST ZAZNACZONY ZADEN
-                        if (querySearch.isNullOrEmpty().not()) {
+                        if (querySearch.isNullOrEmpty().not() && selectedChips()) {
                             viewModel.getWebsiteDataByName(savedCurrentSiteName)
                             observeViewModel()
                         }
@@ -329,16 +329,14 @@ class HomeFragment : Fragment() {
         if (binding.webview.canGoBack()) binding.webview.goBack()
     }
 
-//    private fun getBundleFlag() {
-//        if (arguments != null) {
-//            val str1 = arguments!!.getString("ARG_NAME");
-//        }
-//        val bundle = arguments
-//        val message = bundle!!.getString("SavedWebsiteActivity")
-//        val message2 = bundle!!.getString("SavedWebsiteActivity")
-//     /*   val value = requireArguments().getBoolean("SavedWebsiteActivity")
-//        return requireArguments().getBoolean("SavedWebsiteActivity")*/
-//    }
+    private fun selectedChips(): Boolean {
+        val ids: List<Int> = binding.chipGroup.checkedChipIds
+        for (id in ids) {
+            val chip: Chip = binding.chipGroup.findViewById(id)
+        }
+        Log.e("List is no empty", ids.size.toString())
+        return ids.isNotEmpty()
+    }
 
     private fun isNetworkAvailable(context: Context): Boolean {
         val connectivityManager =
