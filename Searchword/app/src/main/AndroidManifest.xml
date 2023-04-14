@@ -3,18 +3,26 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
+        android:name=".presentation.app.SearchWordApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:name=".presentation.app.SearchWordApp"
         android:supportsRtl="true"
         android:theme="@style/Theme.SearchWord"
         tools:targetApi="31">
+        <activity
+            android:name=".presentation.activities.SavedWebsitesActivity"
+            android:exported="false"
+            android:parentActivityName=".presentation.activities.MainActivity">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
         <activity
             android:name=".presentation.activities.MainActivity"
             android:configChanges="screenSize|orientation"

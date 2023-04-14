@@ -51,13 +51,7 @@ class HomeFragment : Fragment() {
     ): View {
         activity?.title = "Search word"
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
-        //viewModel.getSavedSharedPreferencesUrl()
         return binding.root
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        //viewModel.saveSharedPreferencesUrl(binding.webview.url!!)
     }
 
     override fun onResume() {
@@ -65,6 +59,7 @@ class HomeFragment : Fragment() {
         try {
             viewModel.getSavedSharedPreferencesUrl()
             binding.webview.loadUrl(finalUrl!!)
+
         } catch (e: java.lang.Exception) {
             Log.e(
                 "Shared_Preferences_Error",
@@ -96,7 +91,7 @@ class HomeFragment : Fragment() {
                 searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                     override fun onQueryTextSubmit(query: String?): Boolean {
                         querySearch = query
-                        if(querySearch.isNullOrEmpty().not()){
+                        if (querySearch.isNullOrEmpty().not() && selectedChips()) {
                             viewModel.getWebsiteDataByName(savedCurrentSiteName)
                             observeViewModel()
                         }
@@ -180,7 +175,7 @@ class HomeFragment : Fragment() {
                         when (sharedPreferences) {
                             is SharedPreferencesState.Success -> {
                                 val savedUrl = sharedPreferences.url
-                                if(savedUrl.isNullOrEmpty().not()){
+                                if (savedUrl.isNullOrEmpty().not()) {
                                     finalUrl = savedUrl
                                     //binding.webview.loadUrl(savedUrl!!)
                                 }
@@ -331,6 +326,15 @@ class HomeFragment : Fragment() {
     //icon back button on bottom navigation bar
     fun backArrowButton(context: Context) {
         if (binding.webview.canGoBack()) binding.webview.goBack()
+    }
+
+    private fun selectedChips(): Boolean {
+        val ids: List<Int> = binding.chipGroup.checkedChipIds
+        for (id in ids) {
+            val chip: Chip = binding.chipGroup.findViewById(id)
+        }
+        Log.e("List is no empty", ids.size.toString())
+        return ids.isNotEmpty()
     }
 
     private fun isNetworkAvailable(context: Context): Boolean {
