@@ -91,7 +91,6 @@ class HomeFragment : Fragment() {
                 searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                     override fun onQueryTextSubmit(query: String?): Boolean {
                         querySearch = query
-                        //TRZEBA DAC OR CHIP NIE JEST ZAZNACZONY ZADEN
                         if (querySearch.isNullOrEmpty().not() && selectedChips()) {
                             viewModel.getWebsiteDataByName(savedCurrentSiteName)
                             observeViewModel()
