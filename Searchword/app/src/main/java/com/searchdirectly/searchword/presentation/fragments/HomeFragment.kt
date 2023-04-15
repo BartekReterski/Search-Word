@@ -94,6 +94,12 @@ class HomeFragment : Fragment() {
                         if (querySearch.isNullOrEmpty().not() && selectedChips()) {
                             viewModel.getWebsiteDataByName(savedCurrentSiteName)
                             observeViewModel()
+                        } else {
+                            Toast.makeText(
+                                context,
+                                getString(R.string.what_to_do_info),
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                         return false
                     }
@@ -108,8 +114,6 @@ class HomeFragment : Fragment() {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
                     R.id.action_about -> {
-                        Toast.makeText(requireContext(), "Item 1 selected", Toast.LENGTH_SHORT)
-                            .show()
                         true
                     }
                     R.id.action_share -> {
@@ -117,8 +121,6 @@ class HomeFragment : Fragment() {
                         true
                     }
                     R.id.action_save -> {
-                        Toast.makeText(requireContext(), "Item 3 selected", Toast.LENGTH_SHORT)
-                            .show()
                         true
                     }
                     else -> false
@@ -137,11 +139,11 @@ class HomeFragment : Fragment() {
                         when (webState) {
                             is WebState.Success -> {
                                 val website = webState.webSite
-                                Toast.makeText(
-                                    context,
-                                    website?.siteName + website?.url + website?.queryUrl,
-                                    Toast.LENGTH_LONG
-                                ).show()
+//                                Toast.makeText(
+//                                    context,
+//                                    website?.siteName + website?.url + website?.queryUrl,
+//                                    Toast.LENGTH_LONG
+//                                ).show()
                                 openWebViewBasedOnUrl(website, querySearch)
                             }
                             is WebState.Error -> {
@@ -159,7 +161,7 @@ class HomeFragment : Fragment() {
                 viewModel.sharedPreferencesUiState.distinctUntilChangedBy { it.showedSharedPreferencesAddedMessage }
                     .collectLatest {
                         if (it.showedSharedPreferencesAddedMessage) {
-                            Toast.makeText(context, "Saved SP", Toast.LENGTH_SHORT).show()
+                           // Toast.makeText(context, "Saved SP", Toast.LENGTH_SHORT).show()
                             viewModel.addedMessageInfo()
                         }
                     }
@@ -179,11 +181,11 @@ class HomeFragment : Fragment() {
                                     finalUrl = savedUrl
                                     //binding.webview.loadUrl(savedUrl!!)
                                 }
-                                Toast.makeText(
-                                    context,
-                                    savedUrl,
-                                    Toast.LENGTH_LONG
-                                ).show()
+//                                Toast.makeText(
+//                                    context,
+//                                    savedUrl,
+//                                    Toast.LENGTH_LONG
+//                                ).show()
                             }
                             is SharedPreferencesState.Error -> {
                                 Log.e("Error state", "Getting URL from shared preferences")
@@ -244,6 +246,8 @@ class HomeFragment : Fragment() {
             super.onPageFinished(view, url)
             binding.progressBarHorizontal.visibility = View.GONE
             binding.webview.visibility = View.VISIBLE
+            binding.textViewHelper.visibility = View.GONE
+            binding.imageViewHelper.visibility = View.GONE
             view.hideSoftInput()
         }
     }
@@ -283,6 +287,8 @@ class HomeFragment : Fragment() {
 
     fun closeWebView(context: Context) {
         binding.webview.visibility = View.GONE
+        binding.textViewHelper.visibility = View.VISIBLE
+        binding.imageViewHelper.visibility = View.VISIBLE
     }
 
     fun refreshWebView(context: Context) {

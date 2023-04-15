@@ -20,7 +20,7 @@ class SavedWebsitesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySavedWebsitesBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        supportActionBar!!.title = "Saved weblinks"
+        supportActionBar!!.title = "Saved web links"
         setupMenu()
     }
 
