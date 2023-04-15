@@ -15,6 +15,7 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.MenuProvider
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -98,7 +99,7 @@ class HomeFragment : Fragment() {
                             Toast.makeText(
                                 context,
                                 getString(R.string.what_to_do_info),
-                                Toast.LENGTH_SHORT
+                                Toast.LENGTH_LONG
                             ).show()
                         }
                         return false
@@ -268,7 +269,7 @@ class HomeFragment : Fragment() {
                     Toast.makeText(
                         context,
                         getString(R.string.what_to_do_info),
-                        Toast.LENGTH_SHORT
+                        Toast.LENGTH_LONG
                     ).show()
                     binding.chipGroup.clearCheck()
                 }
@@ -292,13 +293,15 @@ class HomeFragment : Fragment() {
     }
 
     fun refreshWebView(context: Context) {
-        binding.progressBarHorizontal.visibility = View.VISIBLE
-        val url = binding.webview.url
-        binding.webview.loadUrl(url!!)
+        if(binding.webview.isVisible){
+            val url = binding.webview.url
+            binding.progressBarHorizontal.visibility = View.VISIBLE
+            binding.webview.loadUrl(url!!)
+        }
     }
 
     fun shareUrl() {
-        if (finalUrl.isNullOrEmpty().not()) {
+        if (finalUrl.isNullOrEmpty().not() && binding.webview.isVisible) {
             val shareUrl = binding.webview.url
             val sendIntent: Intent = Intent().apply {
                 action = Intent.ACTION_SEND
@@ -312,8 +315,8 @@ class HomeFragment : Fragment() {
         } else {
             Toast.makeText(
                 context,
-                R.string.what_to_do_info,
-                Toast.LENGTH_SHORT
+                R.string.share_info,
+                Toast.LENGTH_LONG
             ).show()
         }
     }
