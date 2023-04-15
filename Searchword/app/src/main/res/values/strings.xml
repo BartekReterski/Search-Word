@@ -16,6 +16,10 @@
     <string name="what_to_do_info">Please type the search phrase and try again</string>
     <string name="Shared_pref_id">MySharedPref</string>
     <string name="close_website_menu">Close website</string>
+    <string name="text_view_helper_home_fragment">Type a word and select the page where you want to search for it</string>
+    <string name="image_view_helper_home_fragment">HelperHomeFragmentImage</string>
+    <string name="text_view_helper_saved_website">The list of saved hyperlinks is empty</string>
+    <string name="image_view_helper_saved_website">SavedWebsiteImage</string>
     //websites names
     <string name="google_name">Google</string>
     <string name="yahoo_name">Yahoo</string>
