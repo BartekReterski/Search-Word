@@ -42,7 +42,6 @@ class HomeFragment : Fragment() {
     private var querySearch: String? = ""
     private var savedCurrentSiteName: String = ""
     private var finalUrl: String? = ""
-    var searchView: SearchView? = null
 
     private val viewModel: WebSiteViewModel by viewModels()
 
@@ -87,9 +86,9 @@ class HomeFragment : Fragment() {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.main_menu, menu)
                 val search = menu.findItem(R.id.action_search)
-                searchView = search?.actionView as SearchView
-                searchView!!.queryHint = getString(R.string.search_query_hint)
-                searchView!!.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                val searchView = search?.actionView as SearchView
+                searchView.queryHint = getString(R.string.search_query_hint)
+                searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                     override fun onQueryTextSubmit(query: String?): Boolean {
                         querySearch = query
                         if (querySearch.isNullOrEmpty().not() && selectedChips()) {
