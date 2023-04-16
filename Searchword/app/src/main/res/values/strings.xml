@@ -13,7 +13,8 @@
     <string name="saved_back_action_menu">Back</string>
     <string name="todo">TODO</string>
     <string name="no_internet_info">Something was wrong, Please check your internet connection</string>
-    <string name="what_to_do_info">Please type the search phrase and try again</string>
+    <string name="what_to_do_info">Please type the search phrase and choose a website to search for it</string>
+    <string name="share_info">There is a problem with share link. Please try if is not empty and browser is visible</string>
     <string name="Shared_pref_id">MySharedPref</string>
     <string name="close_website_menu">Close website</string>
     <string name="text_view_helper_home_fragment">Type a word and select the page where you want to search for it</string>
