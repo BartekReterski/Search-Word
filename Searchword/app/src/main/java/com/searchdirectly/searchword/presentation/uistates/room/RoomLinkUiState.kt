@@ -4,7 +4,8 @@ import com.searchdirectly.searchword.domain.model.SavedLinks
 
 data class RoomLinkUiState(
     val roomLinkState: RoomLinkState = RoomLinkState.Empty,
-    val showedAddedMessage: Boolean = false
+    val showedAddedMessage: Boolean = false,
+    val showedRemovedMessage: Boolean = false
 )
 
 sealed class RoomLinkState {

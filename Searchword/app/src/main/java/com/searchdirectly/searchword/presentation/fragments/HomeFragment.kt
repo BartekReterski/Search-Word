@@ -163,7 +163,7 @@ class HomeFragment : Fragment() {
                     .collectLatest {
                         if (it.showedSharedPreferencesAddedMessage) {
                             // Toast.makeText(context, "Saved SP", Toast.LENGTH_SHORT).show()
-                            viewModel.addedMessageInfo()
+                            viewModel.addedSharedPreferencesMessageInfo()
                         }
                     }
 

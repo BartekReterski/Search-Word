@@ -2,8 +2,9 @@ package com.searchdirectly.searchword.presentation.usecases.room
 
 import com.searchdirectly.searchword.domain.data.repositories.RoomRepository
 import com.searchdirectly.searchword.domain.model.SavedLinks
+import javax.inject.Inject
 
-class GetAllWebLinks(private val roomRepository: RoomRepository) {
+class GetAllWebLinks @Inject constructor(private val roomRepository: RoomRepository) {
 
     suspend operator fun invoke(): Result<List<SavedLinks>> = try {
         Result.success(roomRepository.getAllLinks())

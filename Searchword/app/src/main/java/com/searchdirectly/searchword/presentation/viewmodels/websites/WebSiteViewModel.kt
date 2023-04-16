@@ -87,7 +87,7 @@ class WebSiteViewModel @Inject constructor(
         }
     }
 
-    fun addedMessageInfo() {
+    fun addedSharedPreferencesMessageInfo() {
         _sharedPreferencesUiState.update {
             it.copy(showedSharedPreferencesAddedMessage = false)
         }

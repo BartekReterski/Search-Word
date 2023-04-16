@@ -21,6 +21,9 @@
     <string name="image_view_helper_home_fragment">HelperHomeFragmentImage</string>
     <string name="text_view_helper_saved_website">The list of saved hyperlinks is empty</string>
     <string name="image_view_helper_saved_website">SavedWebsiteImage</string>
+    <string name="link_value">Example link</string>
+    <string name="link_title">Link title example</string>
+    <string name="last_updated_time">Saved time</string>
     //websites names
     <string name="google_name">Google</string>
     <string name="yahoo_name">Yahoo</string>
