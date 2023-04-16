@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class RoomLinksViewModel @Inject constructor(
+class SavedLinksViewModel @Inject constructor(
     private val getAllWebLinks: GetAllWebLinks,
     private val removeLink: RemoveLink,
     private val addWebLink: AddWebLink

@@ -13,7 +13,7 @@ data class SavedLinksEntity(
 
     //column info annotation is for changing time immediately after update or creation
     @ColumnInfo(name = "creation_time")
-    var creationTime: Long,
+    var creationTime: String,
 
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0L
