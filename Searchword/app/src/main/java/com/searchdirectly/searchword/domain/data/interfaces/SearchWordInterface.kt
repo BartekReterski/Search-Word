@@ -1,4 +1,4 @@
-package com.searchdirectly.searchword.domain.data
+package com.searchdirectly.searchword.domain.data.interfaces
 
 import com.searchdirectly.searchword.domain.model.WebSites
 

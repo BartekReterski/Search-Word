@@ -27,7 +27,7 @@ import com.searchdirectly.searchword.databinding.FragmentHomeBinding
 import com.searchdirectly.searchword.domain.model.WebSites
 import com.searchdirectly.searchword.presentation.uistates.preferences.SharedPreferencesState
 import com.searchdirectly.searchword.presentation.uistates.websites.WebState
-import com.searchdirectly.searchword.presentation.viewmodels.WebSiteViewModel
+import com.searchdirectly.searchword.presentation.viewmodels.websites.WebSiteViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
@@ -162,7 +162,7 @@ class HomeFragment : Fragment() {
                 viewModel.sharedPreferencesUiState.distinctUntilChangedBy { it.showedSharedPreferencesAddedMessage }
                     .collectLatest {
                         if (it.showedSharedPreferencesAddedMessage) {
-                           // Toast.makeText(context, "Saved SP", Toast.LENGTH_SHORT).show()
+                            // Toast.makeText(context, "Saved SP", Toast.LENGTH_SHORT).show()
                             viewModel.addedMessageInfo()
                         }
                     }
@@ -293,7 +293,7 @@ class HomeFragment : Fragment() {
     }
 
     fun refreshWebView(context: Context) {
-        if(binding.webview.isVisible){
+        if (binding.webview.isVisible) {
             val url = binding.webview.url
             binding.progressBarHorizontal.visibility = View.VISIBLE
             binding.webview.loadUrl(url!!)

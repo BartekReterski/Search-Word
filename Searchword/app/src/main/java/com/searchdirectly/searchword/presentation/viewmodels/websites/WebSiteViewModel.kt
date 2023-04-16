@@ -1,4 +1,4 @@
-package com.searchdirectly.searchword.presentation.viewmodels
+package com.searchdirectly.searchword.presentation.viewmodels.websites
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

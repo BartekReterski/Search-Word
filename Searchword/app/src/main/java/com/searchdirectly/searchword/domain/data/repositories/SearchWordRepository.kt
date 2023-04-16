@@ -1,8 +1,9 @@
-package com.searchdirectly.searchword.domain.data
+package com.searchdirectly.searchword.domain.data.repositories
 
 import android.content.Context
 import android.content.SharedPreferences
 import com.searchdirectly.searchword.R
+import com.searchdirectly.searchword.domain.data.interfaces.SearchWordInterface
 import com.searchdirectly.searchword.domain.model.WebSites
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject

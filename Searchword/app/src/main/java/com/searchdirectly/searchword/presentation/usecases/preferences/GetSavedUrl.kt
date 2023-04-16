@@ -1,6 +1,6 @@
 package com.searchdirectly.searchword.presentation.usecases.preferences
 
-import com.searchdirectly.searchword.domain.data.SearchWordRepository
+import com.searchdirectly.searchword.domain.data.repositories.SearchWordRepository
 import javax.inject.Inject
 
 class GetSavedUrl @Inject constructor(private val repository: SearchWordRepository) {

@@ -1,8 +1,8 @@
 package com.searchdirectly.searchword.domain.di
 
 import android.content.Context
-import com.searchdirectly.searchword.domain.data.SearchWordInterface
-import com.searchdirectly.searchword.domain.data.SearchWordRepository
+import com.searchdirectly.searchword.domain.data.interfaces.SearchWordInterface
+import com.searchdirectly.searchword.domain.data.repositories.SearchWordRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,5 +15,6 @@ import javax.inject.Singleton
 class AppModule {
     @Provides
     @Singleton
-    fun provideSearchWordRepository(@ApplicationContext appContext: Context):SearchWordInterface=SearchWordRepository(context = appContext)
+    fun provideSearchWordRepository(@ApplicationContext appContext: Context): SearchWordInterface =
+        SearchWordRepository(context = appContext)
 }
