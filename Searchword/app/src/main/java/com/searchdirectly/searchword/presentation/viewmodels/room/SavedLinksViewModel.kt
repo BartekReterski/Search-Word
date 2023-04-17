@@ -34,7 +34,7 @@ class SavedLinksViewModel @Inject constructor(
     private var addWebLinkJob: Job? = null
     private var removeLinkJob: Job? = null
 
-    fun getSavedWebLinks(webSiteName: String) {
+    fun getSavedWebLinks() {
         getAllWebLinksJob?.cancel()
         getAllWebLinksJob = viewModelScope.launch {
             _roomLinksListUiState.update {

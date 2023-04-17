@@ -208,7 +208,7 @@ class HomeFragment : Fragment() {
                 viewModelSavedLinks.roomLinkUiState.distinctUntilChangedBy { it.showedAddedMessage }
                     .collectLatest {
                         if (it.showedAddedMessage) {
-                            //Toast.makeText(context, "SAVED ITEM", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, getString(R.string.saved_item_info), Toast.LENGTH_SHORT).show()
                             viewModelSavedLinks.addedMessageInfo()
                         }
                     }
@@ -374,7 +374,7 @@ class HomeFragment : Fragment() {
         for (id in ids) {
             val chip: Chip = binding.chipGroup.findViewById(id)
         }
-        Log.e("List is no empty", ids.size.toString())
+        Log.e("List is not empty", ids.size.toString())
         return ids.isNotEmpty()
     }
 
