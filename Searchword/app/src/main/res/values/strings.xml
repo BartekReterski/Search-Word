@@ -25,7 +25,7 @@
     <string name="link_title">Link title example</string>
     <string name="last_updated_time">Saved time</string>
     <string name="SavedWebsiteActivityTitle">Saved web links</string>
-    <string name="saved_item_info">Hyperlink saved successfully</string>
+    <string name="saved_item_info">Web link saved successfully</string>
     //websites names
     <string name="google_name">Google</string>
     <string name="yahoo_name">Yahoo</string>
