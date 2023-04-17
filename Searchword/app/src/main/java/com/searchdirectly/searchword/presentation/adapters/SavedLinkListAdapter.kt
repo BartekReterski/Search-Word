@@ -9,7 +9,7 @@ import com.searchdirectly.searchword.domain.model.SavedLinks
 class SavedLinkListAdapter(var savedLinks: ArrayList<SavedLinks>) :
     RecyclerView.Adapter<SavedLinkListAdapter.SavedLinksViewHolder>() {
 
-    inner class SavedLinksViewHolder(private val binding: SavedLinksItemBinding) :
+    inner class SavedLinksViewHolder(binding: SavedLinksItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         private val imageMore = binding.imageMore
@@ -22,7 +22,7 @@ class SavedLinkListAdapter(var savedLinks: ArrayList<SavedLinks>) :
             linkContentValue.text = savedLinks.hyperLink
             linkDate.text = savedLinks.creationTime
 
-            imageMore.setOnClickListener{
+            imageMore.setOnClickListener {
             }
 
 //            layout.setOnLongClickListener {
@@ -35,7 +35,8 @@ class SavedLinkListAdapter(var savedLinks: ArrayList<SavedLinks>) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SavedLinksViewHolder {
-        val binding = SavedLinksItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding =
+            SavedLinksItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
 
         return SavedLinksViewHolder(binding)
     }

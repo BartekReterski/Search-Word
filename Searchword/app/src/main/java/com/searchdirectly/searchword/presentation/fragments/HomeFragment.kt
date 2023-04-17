@@ -37,7 +37,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.text.DateFormat
 
-
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
 
@@ -343,6 +342,7 @@ class HomeFragment : Fragment() {
             val currentWebLink = binding.webview.url
             val currentLinkTitle = binding.webview.title
             val savedTime = DateFormat.getInstance().format(System.currentTimeMillis())
+            //val favicon = binding.webview.favicon
             viewModelSavedLinks.saveWebLink(
                 SavedLinks(
                     title = currentLinkTitle!!,
