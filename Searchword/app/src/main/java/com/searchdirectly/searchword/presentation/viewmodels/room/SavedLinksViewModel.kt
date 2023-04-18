@@ -72,6 +72,7 @@ class SavedLinksViewModel @Inject constructor(
                 _roomLinkUiState.update {
                     it.copy(showedRemovedMessage = true)
                 }
+                getSavedWebLinks()
             }
         }
     }

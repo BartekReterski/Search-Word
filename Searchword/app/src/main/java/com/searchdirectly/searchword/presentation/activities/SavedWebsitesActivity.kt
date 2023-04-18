@@ -7,6 +7,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.view.MenuProvider
 import androidx.lifecycle.Lifecycle
@@ -15,6 +16,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.searchdirectly.searchword.R
 import com.searchdirectly.searchword.databinding.ActivitySavedWebsitesBinding
+import com.searchdirectly.searchword.domain.model.SavedLinks
 import com.searchdirectly.searchword.presentation.adapters.SavedLinkListAdapter
 import com.searchdirectly.searchword.presentation.uistates.room.RoomLinksListState
 import com.searchdirectly.searchword.presentation.viewmodels.room.SavedLinksViewModel
@@ -74,11 +76,33 @@ class SavedWebsitesActivity : AppCompatActivity() {
                     }
             }
         }
+
+        //observe removing link from database
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModelSavedLinks.roomLinkUiState.distinctUntilChangedBy { it.showedRemovedMessage }
+                    .collectLatest {
+                        if (it.showedRemovedMessage) {
+                            Toast.makeText(
+                                this@SavedWebsitesActivity,
+                                getString(R.string.link_removed),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            viewModelSavedLinks.removedMessageInfo()
+                        }
+                    }
+            }
+        }
     }
 
     override fun onResume() {
         super.onResume()
         viewModelSavedLinks.getSavedWebLinks()
+    }
+
+    fun removeLinkFromDatabase(savedLinks: SavedLinks) {
+        viewModelSavedLinks.removeWebLink(savedLinks)
+        observeViewModel()
     }
 
     private fun showLayoutItems(show: Boolean) {

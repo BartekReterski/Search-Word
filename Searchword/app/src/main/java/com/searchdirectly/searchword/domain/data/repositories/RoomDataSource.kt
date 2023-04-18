@@ -17,5 +17,5 @@ class RoomDataSource(context: Context) : RoomInterface {
         savedLinksDao.getAllLinksEntities().map { it.toSavedLinks() }
 
     override suspend fun remove(savedLinks: SavedLinks): Int =
-        savedLinksDao.deleteLinkEntity(SavedLinksEntity.fromSavedLinks(savedLinks))
+        savedLinksDao.deleteLinkEntity(savedLinks.hyperLink)
 }

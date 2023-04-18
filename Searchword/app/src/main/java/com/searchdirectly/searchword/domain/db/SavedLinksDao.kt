@@ -1,7 +1,6 @@
 package com.searchdirectly.searchword.domain.db
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.Companion.REPLACE
 import androidx.room.Query
@@ -15,8 +14,8 @@ interface SavedLinksDao {
     @Query("SELECT * FROM SAVED_LINKS_TABLE")
     suspend fun getAllLinksEntities(): List<SavedLinksEntity>
 
-    @Delete
-    suspend fun deleteLinkEntity(savedLinksEntity: SavedLinksEntity): Int
+    @Query("DELETE FROM SAVED_LINKS_TABLE WHERE hyperLink = :hyperLink")
+    suspend fun deleteLinkEntity(hyperLink: String): Int
 
 
 }
