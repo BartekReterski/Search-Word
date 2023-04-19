@@ -9,18 +9,32 @@
     <string name="share_menu">Share link</string>
     <string name="about_menu">About app</string>
     <string name="more_menu">More</string>
+    <string name="copy_link">Copy link</string>
+    <string name="delete_link">Delete</string>
     //app info
     <string name="saved_back_action_menu">Back</string>
     <string name="todo">TODO</string>
     <string name="no_internet_info">Something was wrong, Please check your internet connection</string>
     <string name="what_to_do_info">Please type the search phrase and choose a website to search for it</string>
-    <string name="share_info">There is a problem with share link. Please try if is not empty and browser is visible</string>
+    <string name="share_info">There is a problem with share link. Please try when search text is not empty and browser is visible</string>
     <string name="Shared_pref_id">MySharedPref</string>
     <string name="close_website_menu">Close website</string>
     <string name="text_view_helper_home_fragment">Type a word and select the page where you want to search for it</string>
     <string name="image_view_helper_home_fragment">HelperHomeFragmentImage</string>
     <string name="text_view_helper_saved_website">The list of saved hyperlinks is empty</string>
     <string name="image_view_helper_saved_website">SavedWebsiteImage</string>
+    <string name="link_value">Example link</string>
+    <string name="link_title">Link title example</string>
+    <string name="last_updated_time">Saved time</string>
+    <string name="SavedWebsiteActivityTitle">Saved web links</string>
+    <string name="saved_item_info">Web link saved successfully</string>
+    <string name="link_removed">Link removed successfully</string>
+    <string name="delete_string">Delete</string>
+    <string name="copied_to_clipboard">Copied to clipboard</string>
+    <string name="delete_dialog_title">Delete link</string>
+    <string name="delete_dialog_confirmation">Do you want to delete link? \n"</string>
+    <string name="deleted_info">Deleted</string>
+    <string name="copied_link_id">Copied Link</string>
     //websites names
     <string name="google_name">Google</string>
     <string name="yahoo_name">Yahoo</string>
@@ -37,4 +51,5 @@
     <string name="instagram_name">Instagram</string>
     <string name="search_query_hint">Type phrase and choose website to search</string>
     <string name="yandex_name">Yandex</string>
+    <string name="duck_duck_go">DuckDuckGo</string>
 </resources>

@@ -24,16 +24,18 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.chip.Chip
 import com.searchdirectly.searchword.R
 import com.searchdirectly.searchword.databinding.FragmentHomeBinding
+import com.searchdirectly.searchword.domain.model.SavedLinks
 import com.searchdirectly.searchword.domain.model.WebSites
 import com.searchdirectly.searchword.presentation.uistates.preferences.SharedPreferencesState
 import com.searchdirectly.searchword.presentation.uistates.websites.WebState
-import com.searchdirectly.searchword.presentation.viewmodels.WebSiteViewModel
+import com.searchdirectly.searchword.presentation.viewmodels.room.SavedLinksViewModel
+import com.searchdirectly.searchword.presentation.viewmodels.websites.WebSiteViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-
+import java.text.DateFormat
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
@@ -45,6 +47,7 @@ class HomeFragment : Fragment() {
     private var finalUrl: String? = ""
 
     private val viewModel: WebSiteViewModel by viewModels()
+    private val viewModelSavedLinks: SavedLinksViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -122,6 +125,7 @@ class HomeFragment : Fragment() {
                         true
                     }
                     R.id.action_save -> {
+                        saveLinkInDatabase()
                         true
                     }
                     else -> false
@@ -162,8 +166,8 @@ class HomeFragment : Fragment() {
                 viewModel.sharedPreferencesUiState.distinctUntilChangedBy { it.showedSharedPreferencesAddedMessage }
                     .collectLatest {
                         if (it.showedSharedPreferencesAddedMessage) {
-                           // Toast.makeText(context, "Saved SP", Toast.LENGTH_SHORT).show()
-                            viewModel.addedMessageInfo()
+                            // Toast.makeText(context, "Saved SP", Toast.LENGTH_SHORT).show()
+                            viewModel.addedSharedPreferencesMessageInfo()
                         }
                     }
 
@@ -193,6 +197,18 @@ class HomeFragment : Fragment() {
                             }
                             is SharedPreferencesState.Loading -> {}
                             is SharedPreferencesState.Empty -> {}
+                        }
+                    }
+            }
+        }
+        //observe adding link to database
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModelSavedLinks.roomLinkUiState.distinctUntilChangedBy { it.showedAddedMessage }
+                    .collectLatest {
+                        if (it.showedAddedMessage) {
+                            Toast.makeText(context, getString(R.string.saved_item_info), Toast.LENGTH_SHORT).show()
+                            viewModelSavedLinks.addedMessageInfo()
                         }
                     }
             }
@@ -293,7 +309,7 @@ class HomeFragment : Fragment() {
     }
 
     fun refreshWebView(context: Context) {
-        if(binding.webview.isVisible){
+        if (binding.webview.isVisible) {
             val url = binding.webview.url
             binding.progressBarHorizontal.visibility = View.VISIBLE
             binding.webview.loadUrl(url!!)
@@ -321,6 +337,22 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private fun saveLinkInDatabase() {
+        if (finalUrl.isNullOrEmpty().not() && binding.webview.isVisible) {
+            val currentWebLink = binding.webview.url
+            val currentLinkTitle = binding.webview.title
+            val savedTime = DateFormat.getInstance().format(System.currentTimeMillis())
+            //val favicon = binding.webview.favicon
+            viewModelSavedLinks.saveWebLink(
+                SavedLinks(
+                    title = currentLinkTitle!!,
+                    hyperLink = currentWebLink!!,
+                    creationTime = savedTime
+                )
+            )
+        }
+    }
+
     //device - back button
     private fun preventBackButton() {
         requireActivity().onBackPressedDispatcher.addCallback(
@@ -342,7 +374,7 @@ class HomeFragment : Fragment() {
         for (id in ids) {
             val chip: Chip = binding.chipGroup.findViewById(id)
         }
-        Log.e("List is no empty", ids.size.toString())
+        Log.e("List is not empty", ids.size.toString())
         return ids.isNotEmpty()
     }
 

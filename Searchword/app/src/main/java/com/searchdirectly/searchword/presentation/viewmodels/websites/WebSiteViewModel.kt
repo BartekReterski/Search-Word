@@ -1,4 +1,4 @@
-package com.searchdirectly.searchword.presentation.viewmodels
+package com.searchdirectly.searchword.presentation.viewmodels.websites
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -87,7 +87,7 @@ class WebSiteViewModel @Inject constructor(
         }
     }
 
-    fun addedMessageInfo() {
+    fun addedSharedPreferencesMessageInfo() {
         _sharedPreferencesUiState.update {
             it.copy(showedSharedPreferencesAddedMessage = false)
         }

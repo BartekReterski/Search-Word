@@ -30,4 +30,9 @@
     <style name="TextAppearance">
         <item name="android:textColor">@android:color/white</item>
     </style>
+
+    <style name="CustomPopUpStyle" parent="Widget.AppCompat.PopupMenu">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:itemBackground">@color/blue_light</item>
+    </style>
 </resources>
