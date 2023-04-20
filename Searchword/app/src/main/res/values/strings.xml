@@ -76,4 +76,5 @@
     <string name="ebay_endpoint">nkw=</string>
     <string name="pinterest_value">https://pl.pinterest.com/search/pins/?</string>
     <string name="pinterest_endpoint">q=</string>
+    <string name="open_link_in_web_view_menu">Open in browser</string>
 </resources>

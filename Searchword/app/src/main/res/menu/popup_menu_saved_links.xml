@@ -5,6 +5,10 @@
         android:icon="@drawable/ic_baseline_share_24"
         android:title="@string/share_menu" />
     <item
+        android:id="@+id/menu_saved_open_in_web_view"
+        android:icon="@drawable/ic_baseline_language_24"
+        android:title="@string/open_link_in_web_view_menu" />
+    <item
         android:id="@+id/menu_saved_copy_link"
         android:icon="@drawable/ic_baseline_content_copy_24"
         android:title="@string/copy_link" />

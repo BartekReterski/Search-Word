@@ -2,6 +2,8 @@ package com.searchdirectly.searchword.domain.data.repositories
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import com.searchdirectly.searchword.R
 import com.searchdirectly.searchword.domain.data.interfaces.SearchWordInterface
 import com.searchdirectly.searchword.domain.model.WebSites
@@ -151,5 +153,21 @@ class SearchWordRepository @Inject constructor(@ApplicationContext val context: 
                 Context.MODE_PRIVATE
             )
         return sh.getString("url", "")
+    }
+
+    override suspend fun isNetworkAvailable(): Boolean {
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val nw = connectivityManager.activeNetwork ?: return false
+        val actNw = connectivityManager.getNetworkCapabilities(nw) ?: return false
+        return when {
+            actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+            actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+            //for other device how are able to connect with Ethernet
+            actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
+            //for check internet over Bluetooth
+            actNw.hasTransport(NetworkCapabilities.TRANSPORT_BLUETOOTH) -> true
+            else -> false
+        }
     }
 }
