@@ -2,10 +2,7 @@ package com.searchdirectly.searchword.presentation.fragments
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Context.CONNECTIVITY_SERVICE
 import android.content.Intent
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -154,6 +151,10 @@ class HomeFragment : Fragment() {
                             is WebState.Error -> {
                                 Log.e("Error state", "Passing website URL")
                             }
+                            is WebState.NoErrorConnection -> {
+                                Toast.makeText(context,R.string.no_internet_info,Toast.LENGTH_SHORT).show()
+                                binding.progressBarHorizontal.visibility = View.GONE
+                            }
                             is WebState.Loading -> {}
                             is WebState.Empty -> {}
                         }
@@ -207,7 +208,11 @@ class HomeFragment : Fragment() {
                 viewModelSavedLinks.roomLinkUiState.distinctUntilChangedBy { it.showedAddedMessage }
                     .collectLatest {
                         if (it.showedAddedMessage) {
-                            Toast.makeText(context, getString(R.string.saved_item_info), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                context,
+                                getString(R.string.saved_item_info),
+                                Toast.LENGTH_SHORT
+                            ).show()
                             viewModelSavedLinks.addedMessageInfo()
                         }
                     }
@@ -220,16 +225,12 @@ class HomeFragment : Fragment() {
         val url = webSites?.url
         val queryUrl = webSites?.queryUrl + querySearch
         finalUrl = url + queryUrl
-        if (isNetworkAvailable(requireContext())) {
-            binding.webview.webViewClient = WebViewClient()
-            binding.webview.apply {
-                loadUrl(finalUrl!!)
-                settings.javaScriptEnabled = true
-            }
-            binding.webview.webChromeClient = WebChromeClient()
-        } else {
-            Toast.makeText(context, R.string.no_internet_info, Toast.LENGTH_LONG).show()
+        binding.webview.webViewClient = WebViewClient()
+        binding.webview.apply {
+            loadUrl(finalUrl!!)
+            settings.javaScriptEnabled = true
         }
+        binding.webview.webChromeClient = WebChromeClient()
     }
 
     inner class WebChromeClient : android.webkit.WebChromeClient() {
@@ -377,20 +378,4 @@ class HomeFragment : Fragment() {
         Log.e("List is not empty", ids.size.toString())
         return ids.isNotEmpty()
     }
-
-//    private fun isNetworkAvailable(context: Context): Boolean {
-//        val connectivityManager =
-//            context.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
-//        val nw = connectivityManager.activeNetwork ?: return false
-//        val actNw = connectivityManager.getNetworkCapabilities(nw) ?: return false
-//        return when {
-//            actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
-//            actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
-//            //for other device how are able to connect with Ethernet
-//            actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
-//            //for check internet over Bluetooth
-//            actNw.hasTransport(NetworkCapabilities.TRANSPORT_BLUETOOTH) -> true
-//            else -> false
-//        }
-//    }
 }

@@ -9,6 +9,7 @@ data class WebSitesUiState(
 sealed class WebState {
     data class Success(val webSite: WebSites?) : WebState()
     data class Error(val message: String) : WebState()
+    data class NoErrorConnection(val message: String): WebState()
     object Loading : WebState()
     object Empty : WebState()
 }

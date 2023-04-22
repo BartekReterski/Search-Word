@@ -36,6 +36,7 @@
     <string name="deleted_info">Deleted</string>
     <string name="copied_link_id">Copied Link</string>
     <string name="search_query_hint">Type phrase and choose website to search</string>
+    <string name="open_link_in_web_view_menu">Open in browser</string>
     //websites names, values and queries
     <string name="google_name">Google</string>
     <string name="yahoo_name">Yahoo</string>
@@ -76,5 +77,4 @@
     <string name="ebay_endpoint">nkw=</string>
     <string name="pinterest_value">https://pl.pinterest.com/search/pins/?</string>
     <string name="pinterest_endpoint">q=</string>
-    <string name="open_link_in_web_view_menu">Open in browser</string>
 </resources>
