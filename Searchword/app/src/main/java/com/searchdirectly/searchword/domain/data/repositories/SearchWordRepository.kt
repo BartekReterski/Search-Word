@@ -4,7 +4,8 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.searchdirectly.searchword.R
 import com.searchdirectly.searchword.domain.data.interfaces.SearchWordInterface
-import com.searchdirectly.searchword.domain.model.WebSites
+import com.searchdirectly.searchword.domain.model.preferences.SharedPreferencesModel
+import com.searchdirectly.searchword.domain.model.websites.WebSites
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -15,42 +16,142 @@ class SearchWordRepository @Inject constructor(@ApplicationContext val context: 
 
     override suspend fun getWebSite(websiteName: String): WebSites? {
         val list = mutableListOf<WebSites>()
-        list.add(WebSites("Google", "https://www.google.com/search?", "q="))
-        list.add(WebSites("Bing", "https://www.bing.com/search?", "q="))
-        list.add(WebSites("Yahoo", "https://search.yahoo.com/search?", "p="))
-        list.add(WebSites("Yandex", "https://yandex.com/search/?", "text="))
-        list.add(WebSites("Youtube", "https://www.youtube.com/results?", "search_query="))
-        list.add(WebSites("Twitter", "https://twitter.com/search?lang=pl&", "q="))
-        list.add(WebSites("Instagram", "https://www.instagram.com/explore/tags/", ""))
-        //list.add(WebSites("Tiktok", "https://www.tiktok.com/search?", "q="))
-        list.add(WebSites("Reddit", "https://www.reddit.com/search/?", "q="))
-        list.add(WebSites("Wikipedia", "https://en.m.wikipedia.org/wiki/", ""))
-        list.add(WebSites("Amazon", "https://www.amazon.pl/s?", "k="))
-        list.add(WebSites("Ebay", "https://www.ebay.pl/sch/i.html?_", "nkw="))
-        list.add(WebSites("Pinterest", "https://pl.pinterest.com/search/pins/?", "q="))
-        //list.add(WebSites("Dictionary", "https://search.yahoo.com/search?", "p="))
+        list.add(
+            WebSites(
+                context.getString(R.string.google_name),
+                context.getString(R.string.google_value),
+                context.getString(
+                    R.string.google_endpoint
+                )
+            )
+        )
+        list.add(
+            WebSites(
+                context.getString(R.string.bing_name),
+                context.getString(R.string.bing_value),
+                context.getString(
+                    R.string.bing_endpoint
+                )
+            )
+        )
+        list.add(
+            WebSites(
+                context.getString(R.string.yahoo_name),
+                context.getString(R.string.yahoo_value),
+                context.getString(
+                    R.string.yahoo_endpoint
+                )
+            )
+        )
+        list.add(
+            WebSites(
+                context.getString(R.string.duck_duck_go),
+                context.getString(R.string.duck_duck_go_value),
+                context.getString(
+                    R.string.duck_duck_go_endpoint
+                )
+            )
+        )
+        list.add(
+            WebSites(
+                context.getString(R.string.yandex_name),
+                context.getString(R.string.yandex_value),
+                context.getString(
+                    R.string.yandex_endpoint
+                )
+            )
+        )
+        list.add(
+            WebSites(
+                context.getString(R.string.youtube_name),
+                context.getString(R.string.youtube_value),
+                context.getString(
+                    R.string.youtube_endpoint
+                )
+            )
+        )
+        list.add(
+            WebSites(
+                context.getString(R.string.twitter_name),
+                context.getString(R.string.twitter_value),
+                context.getString(
+                    R.string.twitter_endpoint
+                )
+            )
+        )
+        list.add(
+            WebSites(
+                context.getString(R.string.instagram_name),
+                context.getString(R.string.instagram_value),
+                ""
+            )
+        )
+        list.add(
+            WebSites(
+                context.getString(R.string.reddit_name),
+                context.getString(R.string.reddit_value),
+                context.getString(
+                    R.string.reddit_endpoint
+                )
+            )
+        )
+        list.add(
+            WebSites(
+                context.getString(R.string.wikipedia_name),
+                context.getString(R.string.wikipedia_value),
+                ""
+            )
+        )
+        list.add(
+            WebSites(
+                context.getString(R.string.amazon_name),
+                context.getString(R.string.amazon_value),
+                context.getString(
+                    R.string.amazon_endpoint
+                )
+            )
+        )
+        list.add(
+            WebSites(
+                context.getString(R.string.ebay_name),
+                context.getString(R.string.ebay_value),
+                context.getString(
+                    R.string.ebay_endpoint
+                )
+            )
+        )
+        list.add(
+            WebSites(
+                context.getString(R.string.pinterest_name),
+                context.getString(R.string.pinterest_value),
+                context.getString(
+                    R.string.pinterest_endpoint
+                )
+            )
+        )
 
         return list.find { it.siteName == websiteName }
     }
 
-    override suspend fun saveStateUrl(url: String): Boolean {
+    override suspend fun saveStateUrl(sharedPreferencesModel: SharedPreferencesModel): Boolean {
         val sharedPreferences: SharedPreferences =
             context.getSharedPreferences(
                 context.getString(R.string.Shared_pref_id),
                 Context.MODE_PRIVATE
             )
         val myEdit = sharedPreferences.edit()
-        myEdit.putString("url", url)
+        myEdit.putString("url", sharedPreferencesModel.hyperLinkSp)
+        myEdit.putString("query", sharedPreferencesModel.queryValueSp)
         myEdit.apply()
         return true
     }
 
-    override suspend fun getSavedUrl(): String? {
+    override suspend fun getSavedUrl(): SharedPreferencesModel{
         val sh: SharedPreferences =
             context.getSharedPreferences(
                 context.getString(R.string.Shared_pref_id),
                 Context.MODE_PRIVATE
             )
-        return sh.getString("url", "")
+       return SharedPreferencesModel(sh.getString("url",""),sh.getString("query",""))
     }
 }

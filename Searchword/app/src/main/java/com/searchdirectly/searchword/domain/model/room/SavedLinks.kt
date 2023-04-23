@@ -1,4 +1,4 @@
-package com.searchdirectly.searchword.domain.model
+package com.searchdirectly.searchword.domain.model.room
 
 data class SavedLinks(
     var title: String,

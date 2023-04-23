@@ -1,7 +1,7 @@
 package com.searchdirectly.searchword.presentation.usecases.websites
 
 import com.searchdirectly.searchword.domain.data.repositories.SearchWordRepository
-import com.searchdirectly.searchword.domain.model.WebSites
+import com.searchdirectly.searchword.domain.model.websites.WebSites
 import javax.inject.Inject
 
 class GetWebSiteByName @Inject constructor(private val repository: SearchWordRepository) {

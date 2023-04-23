@@ -35,7 +35,9 @@
     <string name="delete_dialog_confirmation">Do you want to delete link? \n"</string>
     <string name="deleted_info">Deleted</string>
     <string name="copied_link_id">Copied Link</string>
-    //websites names
+    <string name="search_query_hint">Type phrase and choose website to search</string>
+    <string name="open_link_in_web_view_menu">Open in browser</string>
+    //websites names, values and queries
     <string name="google_name">Google</string>
     <string name="yahoo_name">Yahoo</string>
     <string name="twitter_name">Twitter</string>
@@ -49,7 +51,30 @@
     <string name="bing_name">Bing</string>
     <string name="tiktok_name">Tiktok</string>
     <string name="instagram_name">Instagram</string>
-    <string name="search_query_hint">Type phrase and choose website to search</string>
     <string name="yandex_name">Yandex</string>
     <string name="duck_duck_go">DuckDuckGo</string>
+    <string name="google_value">https://www.google.com/search?</string>
+    <string name="google_endpoint">q=</string>
+    <string name="bing_value">https://www.bing.com/search?</string>
+    <string name="bing_endpoint">q=</string>
+    <string name="yahoo_value">https://search.yahoo.com/search?</string>
+    <string name="yahoo_endpoint">p=</string>
+    <string name="duck_duck_go_value">https://duckduckgo.com/?</string>
+    <string name="duck_duck_go_endpoint">q=</string>
+    <string name="yandex_value">https://yandex.com/search/?</string>
+    <string name="yandex_endpoint">text=</string>
+    <string name="youtube_value">https://www.youtube.com/results?</string>
+    <string name="youtube_endpoint">search_query=</string>
+    <string name="twitter_value"><![CDATA[https://twitter.com/search?lang=pl&]]></string>
+    <string name="twitter_endpoint">q=</string>
+    <string name="instagram_value">https://www.instagram.com/explore/tags/</string>
+    <string name="reddit_value">https://www.reddit.com/search/?</string>
+    <string name="reddit_endpoint">q=</string>
+    <string name="wikipedia_value">https://en.m.wikipedia.org/wiki/</string>
+    <string name="amazon_value">https://www.amazon.pl/s?</string>
+    <string name="amazon_endpoint">k=</string>
+    <string name="ebay_value">https://www.ebay.pl/sch/i.html?_</string>
+    <string name="ebay_endpoint">nkw=</string>
+    <string name="pinterest_value">https://pl.pinterest.com/search/pins/?</string>
+    <string name="pinterest_endpoint">q=</string>
 </resources>

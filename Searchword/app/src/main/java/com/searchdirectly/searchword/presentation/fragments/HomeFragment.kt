@@ -2,10 +2,7 @@ package com.searchdirectly.searchword.presentation.fragments
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Context.CONNECTIVITY_SERVICE
 import android.content.Intent
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -24,8 +21,9 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.chip.Chip
 import com.searchdirectly.searchword.R
 import com.searchdirectly.searchword.databinding.FragmentHomeBinding
-import com.searchdirectly.searchword.domain.model.SavedLinks
-import com.searchdirectly.searchword.domain.model.WebSites
+import com.searchdirectly.searchword.domain.model.preferences.SharedPreferencesModel
+import com.searchdirectly.searchword.domain.model.room.SavedLinks
+import com.searchdirectly.searchword.domain.model.websites.WebSites
 import com.searchdirectly.searchword.presentation.uistates.preferences.SharedPreferencesState
 import com.searchdirectly.searchword.presentation.uistates.websites.WebState
 import com.searchdirectly.searchword.presentation.viewmodels.room.SavedLinksViewModel
@@ -45,6 +43,7 @@ class HomeFragment : Fragment() {
     private var querySearch: String? = ""
     private var savedCurrentSiteName: String = ""
     private var finalUrl: String? = ""
+    private lateinit var searchView: SearchView
 
     private val viewModel: WebSiteViewModel by viewModels()
     private val viewModelSavedLinks: SavedLinksViewModel by viewModels()
@@ -61,8 +60,9 @@ class HomeFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         try {
-            viewModel.getSavedSharedPreferencesUrl()
+            viewModel.getSharedPreferences()
             binding.webview.loadUrl(finalUrl!!)
+            searchView.setQuery(querySearch, false)
 
         } catch (e: java.lang.Exception) {
             Log.e(
@@ -74,7 +74,12 @@ class HomeFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        viewModel.saveSharedPreferencesUrl(binding.webview.url!!)
+        viewModel.saveSharedPreferences(
+            SharedPreferencesModel(
+                binding.webview.url,
+                searchView.query.toString()
+            )
+        )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -90,7 +95,7 @@ class HomeFragment : Fragment() {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.main_menu, menu)
                 val search = menu.findItem(R.id.action_search)
-                val searchView = search?.actionView as SearchView
+                searchView = search?.actionView as SearchView
                 searchView.queryHint = getString(R.string.search_query_hint)
                 searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                     override fun onQueryTextSubmit(query: String?): Boolean {
@@ -144,15 +149,17 @@ class HomeFragment : Fragment() {
                         when (webState) {
                             is WebState.Success -> {
                                 val website = webState.webSite
-//                                Toast.makeText(
-//                                    context,
-//                                    website?.siteName + website?.url + website?.queryUrl,
-//                                    Toast.LENGTH_LONG
-//                                ).show()
                                 openWebViewBasedOnUrl(website, querySearch)
                             }
                             is WebState.Error -> {
                                 Log.e("Error state", "Passing website URL")
+                            }
+                            is WebState.NoInternetConnection -> {
+                                Toast.makeText(
+                                    context,
+                                    R.string.no_internet_info,
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                             is WebState.Loading -> {}
                             is WebState.Empty -> {}
@@ -181,16 +188,13 @@ class HomeFragment : Fragment() {
                     .collectLatest { sharedPreferences ->
                         when (sharedPreferences) {
                             is SharedPreferencesState.Success -> {
-                                val savedUrl = sharedPreferences.url
+                                val savedUrl = sharedPreferences.sharedPreferencesModel?.hyperLinkSp
+                                val savedQuery =
+                                    sharedPreferences.sharedPreferencesModel?.queryValueSp
                                 if (savedUrl.isNullOrEmpty().not()) {
                                     finalUrl = savedUrl
-                                    //binding.webview.loadUrl(savedUrl!!)
+                                    querySearch = savedQuery
                                 }
-//                                Toast.makeText(
-//                                    context,
-//                                    savedUrl,
-//                                    Toast.LENGTH_LONG
-//                                ).show()
                             }
                             is SharedPreferencesState.Error -> {
                                 Log.e("Error state", "Getting URL from shared preferences")
@@ -207,7 +211,11 @@ class HomeFragment : Fragment() {
                 viewModelSavedLinks.roomLinkUiState.distinctUntilChangedBy { it.showedAddedMessage }
                     .collectLatest {
                         if (it.showedAddedMessage) {
-                            Toast.makeText(context, getString(R.string.saved_item_info), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                context,
+                                getString(R.string.saved_item_info),
+                                Toast.LENGTH_SHORT
+                            ).show()
                             viewModelSavedLinks.addedMessageInfo()
                         }
                     }
@@ -220,21 +228,21 @@ class HomeFragment : Fragment() {
         val url = webSites?.url
         val queryUrl = webSites?.queryUrl + querySearch
         finalUrl = url + queryUrl
-        if (isNetworkAvailable(requireContext())) {
-            binding.webview.webViewClient = WebViewClient()
-            binding.webview.apply {
-                loadUrl(finalUrl!!)
-                settings.javaScriptEnabled = true
-            }
-            binding.webview.webChromeClient = WebChromeClient()
-        } else {
-            Toast.makeText(context, R.string.no_internet_info, Toast.LENGTH_LONG).show()
+        binding.webview.webViewClient = WebViewClient()
+        binding.webview.apply {
+            loadUrl(finalUrl!!)
+            settings.javaScriptEnabled = true
         }
+        binding.webview.webChromeClient = WebChromeClient()
     }
 
     inner class WebChromeClient : android.webkit.WebChromeClient() {
         override fun onProgressChanged(view: WebView?, newProgress: Int) {
+            binding.progressBarHorizontal.visibility = View.VISIBLE
             binding.progressBarHorizontal.setProgress(newProgress, true)
+            if(newProgress == 100){
+                binding.progressBarHorizontal.visibility = View.GONE
+            }
         }
     }
 
@@ -243,7 +251,6 @@ class HomeFragment : Fragment() {
 
         @Deprecated("Deprecated in Java")
         override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
-            binding.progressBarHorizontal.visibility = View.VISIBLE
             view.loadUrl(url)
             return false
         }
@@ -253,7 +260,6 @@ class HomeFragment : Fragment() {
             request: WebResourceRequest
         ): Boolean {
             val uri = request.url
-            binding.progressBarHorizontal.visibility = View.VISIBLE
             view?.loadUrl(uri.toString())
             return false
         }
@@ -280,7 +286,6 @@ class HomeFragment : Fragment() {
                     }
                     savedCurrentSiteName = selectedChipText
                     viewModel.getWebsiteDataByName(selectedChipText)
-                    binding.progressBarHorizontal.visibility = View.VISIBLE
                 } else {
                     Toast.makeText(
                         context,
@@ -369,6 +374,7 @@ class HomeFragment : Fragment() {
         if (binding.webview.canGoBack()) binding.webview.goBack()
     }
 
+    //check if at least one chip is selected
     private fun selectedChips(): Boolean {
         val ids: List<Int> = binding.chipGroup.checkedChipIds
         for (id in ids) {
@@ -376,21 +382,5 @@ class HomeFragment : Fragment() {
         }
         Log.e("List is not empty", ids.size.toString())
         return ids.isNotEmpty()
-    }
-
-    private fun isNetworkAvailable(context: Context): Boolean {
-        val connectivityManager =
-            context.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
-        val nw = connectivityManager.activeNetwork ?: return false
-        val actNw = connectivityManager.getNetworkCapabilities(nw) ?: return false
-        return when {
-            actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
-            actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
-            //for other device how are able to connect with Ethernet
-            actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
-            //for check internet over Bluetooth
-            actNw.hasTransport(NetworkCapabilities.TRANSPORT_BLUETOOTH) -> true
-            else -> false
-        }
     }
 }
