@@ -67,6 +67,7 @@
             <com.google.android.material.chip.Chip
                 android:id="@+id/twitter_chip"
                 style="@style/CustomStyleChip"
+                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/twitter_name" />

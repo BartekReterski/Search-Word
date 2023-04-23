@@ -11,7 +11,7 @@ import com.searchdirectly.searchword.presentation.uistates.preferences.SharedPre
 import com.searchdirectly.searchword.presentation.uistates.preferences.SharedPreferencesUiState
 import com.searchdirectly.searchword.presentation.uistates.websites.WebSitesUiState
 import com.searchdirectly.searchword.presentation.uistates.websites.WebState
-import com.searchdirectly.searchword.presentation.usecases.preferences.GetSavedSharedPreferencesData
+import com.searchdirectly.searchword.presentation.usecases.preferences.GetSharedPreferencesData
 import com.searchdirectly.searchword.presentation.usecases.preferences.SaveSharedPreferencesData
 import com.searchdirectly.searchword.presentation.usecases.websites.GetWebSiteByName
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,7 +26,7 @@ import javax.inject.Inject
 class WebSiteViewModel @Inject constructor(
     application: Application,
     private val getWebSiteByName: GetWebSiteByName,
-    private val getSavedSharedPreferencesData: GetSavedSharedPreferencesData,
+    private val getSharedPreferencesData: GetSharedPreferencesData,
     private val saveSharedPreferencesData: SaveSharedPreferencesData
 ) :
     AndroidViewModel(application = application) {
@@ -76,7 +76,7 @@ class WebSiteViewModel @Inject constructor(
             _sharedPreferencesUiState.update {
                 it.copy(sharedPreferenceState = SharedPreferencesState.Loading)
             }
-            val getSavedPreferencesModelData = getSavedSharedPreferencesData.invoke()
+            val getSavedPreferencesModelData = getSharedPreferencesData.invoke()
             if (getSavedPreferencesModelData.isSuccess) {
                 _sharedPreferencesUiState.update {
                     it.copy(sharedPreferenceState = SharedPreferencesState.Success(getSavedPreferencesModelData.getOrThrow()))

@@ -240,6 +240,9 @@ class HomeFragment : Fragment() {
         override fun onProgressChanged(view: WebView?, newProgress: Int) {
             binding.progressBarHorizontal.visibility = View.VISIBLE
             binding.progressBarHorizontal.setProgress(newProgress, true)
+            if(newProgress == 100){
+                binding.progressBarHorizontal.visibility = View.GONE
+            }
         }
     }
 
@@ -248,7 +251,6 @@ class HomeFragment : Fragment() {
 
         @Deprecated("Deprecated in Java")
         override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
-            binding.progressBarHorizontal.visibility = View.VISIBLE
             view.loadUrl(url)
             return false
         }
@@ -258,7 +260,6 @@ class HomeFragment : Fragment() {
             request: WebResourceRequest
         ): Boolean {
             val uri = request.url
-            binding.progressBarHorizontal.visibility = View.VISIBLE
             view?.loadUrl(uri.toString())
             return false
         }
@@ -285,7 +286,6 @@ class HomeFragment : Fragment() {
                     }
                     savedCurrentSiteName = selectedChipText
                     viewModel.getWebsiteDataByName(selectedChipText)
-                    observeViewModel()
                 } else {
                     Toast.makeText(
                         context,

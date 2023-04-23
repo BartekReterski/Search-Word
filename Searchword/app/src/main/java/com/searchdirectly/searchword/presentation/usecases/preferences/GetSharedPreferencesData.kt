@@ -4,7 +4,7 @@ import com.searchdirectly.searchword.domain.data.repositories.SearchWordReposito
 import com.searchdirectly.searchword.domain.model.preferences.SharedPreferencesModel
 import javax.inject.Inject
 
-class GetSavedSharedPreferencesData @Inject constructor(private val repository: SearchWordRepository) {
+class GetSharedPreferencesData @Inject constructor(private val repository: SearchWordRepository) {
 
     suspend operator fun invoke(): Result<SharedPreferencesModel?> = try {
         Result.success(repository.getSavedUrl())
