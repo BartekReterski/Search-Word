@@ -2,7 +2,7 @@ package com.searchdirectly.searchword.presentation.viewmodels.room
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.searchdirectly.searchword.domain.model.SavedLinks
+import com.searchdirectly.searchword.domain.model.room.SavedLinks
 import com.searchdirectly.searchword.presentation.uistates.room.RoomLinkUiState
 import com.searchdirectly.searchword.presentation.uistates.room.RoomLinksListState
 import com.searchdirectly.searchword.presentation.uistates.room.RoomLinksListUiState

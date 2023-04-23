@@ -7,6 +7,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Context.CLIPBOARD_SERVICE
 import android.content.Intent
+import android.net.Uri
 import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
@@ -17,7 +18,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.searchdirectly.searchword.R
 import com.searchdirectly.searchword.databinding.SavedLinksItemBinding
-import com.searchdirectly.searchword.domain.model.SavedLinks
+import com.searchdirectly.searchword.domain.model.room.SavedLinks
 import com.searchdirectly.searchword.presentation.activities.SavedWebsitesActivity
 
 class SavedLinkListAdapter(var savedLinks: ArrayList<SavedLinks>) :
@@ -52,6 +53,10 @@ class SavedLinkListAdapter(var savedLinks: ArrayList<SavedLinks>) :
                     shareLink(it, savedLinks)
                     true
                 }
+                R.id.menu_saved_open_in_web_view -> {
+                    openLinkInWebBrowser(it, savedLinks)
+                    true
+                }
                 R.id.menu_saved_copy_link -> {
                     copyLinkToClipboard(it, savedLinks)
                     true
@@ -79,6 +84,14 @@ class SavedLinkListAdapter(var savedLinks: ArrayList<SavedLinks>) :
         } finally {
             popupMenu.show()
         }
+    }
+
+    private fun openLinkInWebBrowser(it: View, savedLinks: SavedLinks) {
+        val urlIntent = Intent(
+            Intent.ACTION_VIEW,
+            Uri.parse(savedLinks.hyperLink)
+        )
+        it.context.startActivity(urlIntent)
     }
 
     private fun shareLink(it: View, savedLinks: SavedLinks) {

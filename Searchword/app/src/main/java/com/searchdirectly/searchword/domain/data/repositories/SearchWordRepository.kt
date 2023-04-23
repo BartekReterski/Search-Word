@@ -4,7 +4,8 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.searchdirectly.searchword.R
 import com.searchdirectly.searchword.domain.data.interfaces.SearchWordInterface
-import com.searchdirectly.searchword.domain.model.WebSites
+import com.searchdirectly.searchword.domain.model.preferences.SharedPreferencesModel
+import com.searchdirectly.searchword.domain.model.websites.WebSites
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -132,24 +133,25 @@ class SearchWordRepository @Inject constructor(@ApplicationContext val context: 
         return list.find { it.siteName == websiteName }
     }
 
-    override suspend fun saveStateUrl(url: String): Boolean {
+    override suspend fun saveStateUrl(sharedPreferencesModel: SharedPreferencesModel): Boolean {
         val sharedPreferences: SharedPreferences =
             context.getSharedPreferences(
                 context.getString(R.string.Shared_pref_id),
                 Context.MODE_PRIVATE
             )
         val myEdit = sharedPreferences.edit()
-        myEdit.putString("url", url)
+        myEdit.putString("url", sharedPreferencesModel.hyperLinkSp)
+        myEdit.putString("query", sharedPreferencesModel.queryValueSp)
         myEdit.apply()
         return true
     }
 
-    override suspend fun getSavedUrl(): String? {
+    override suspend fun getSavedUrl(): SharedPreferencesModel{
         val sh: SharedPreferences =
             context.getSharedPreferences(
                 context.getString(R.string.Shared_pref_id),
                 Context.MODE_PRIVATE
             )
-        return sh.getString("url", "")
+       return SharedPreferencesModel(sh.getString("url",""),sh.getString("query",""))
     }
 }

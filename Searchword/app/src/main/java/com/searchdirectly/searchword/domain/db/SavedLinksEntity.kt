@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.searchdirectly.searchword.domain.model.SavedLinks
+import com.searchdirectly.searchword.domain.model.room.SavedLinks
 
 @Entity(tableName = "saved_links_table", indices = [Index(value = ["hyperLink"], unique = true)])
 data class SavedLinksEntity(

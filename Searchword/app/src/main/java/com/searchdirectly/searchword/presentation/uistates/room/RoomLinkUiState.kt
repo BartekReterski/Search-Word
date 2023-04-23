@@ -1,6 +1,6 @@
 package com.searchdirectly.searchword.presentation.uistates.room
 
-import com.searchdirectly.searchword.domain.model.SavedLinks
+import com.searchdirectly.searchword.domain.model.room.SavedLinks
 
 data class RoomLinkUiState(
     val roomLinkState: RoomLinkState = RoomLinkState.Empty,

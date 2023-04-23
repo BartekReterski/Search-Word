@@ -16,7 +16,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.searchdirectly.searchword.R
 import com.searchdirectly.searchword.databinding.ActivitySavedWebsitesBinding
-import com.searchdirectly.searchword.domain.model.SavedLinks
+import com.searchdirectly.searchword.domain.model.room.SavedLinks
 import com.searchdirectly.searchword.presentation.adapters.SavedLinkListAdapter
 import com.searchdirectly.searchword.presentation.uistates.room.RoomLinksListState
 import com.searchdirectly.searchword.presentation.viewmodels.room.SavedLinksViewModel

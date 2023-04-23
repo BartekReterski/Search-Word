@@ -4,7 +4,7 @@ import android.content.Context
 import com.searchdirectly.searchword.domain.data.interfaces.RoomInterface
 import com.searchdirectly.searchword.domain.db.DatabaseService
 import com.searchdirectly.searchword.domain.db.SavedLinksEntity
-import com.searchdirectly.searchword.domain.model.SavedLinks
+import com.searchdirectly.searchword.domain.model.room.SavedLinks
 
 class RoomDataSource(context: Context) : RoomInterface {
     private val savedLinksDao = DatabaseService.getInstance(context).savedLinksDao()

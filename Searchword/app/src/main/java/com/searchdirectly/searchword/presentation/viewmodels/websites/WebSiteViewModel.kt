@@ -6,12 +6,13 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.searchdirectly.searchword.domain.model.preferences.SharedPreferencesModel
 import com.searchdirectly.searchword.presentation.uistates.preferences.SharedPreferencesState
 import com.searchdirectly.searchword.presentation.uistates.preferences.SharedPreferencesUiState
 import com.searchdirectly.searchword.presentation.uistates.websites.WebSitesUiState
 import com.searchdirectly.searchword.presentation.uistates.websites.WebState
-import com.searchdirectly.searchword.presentation.usecases.preferences.GetSavedUrl
-import com.searchdirectly.searchword.presentation.usecases.preferences.SaveUrl
+import com.searchdirectly.searchword.presentation.usecases.preferences.GetSavedSharedPreferencesData
+import com.searchdirectly.searchword.presentation.usecases.preferences.SaveSharedPreferencesData
 import com.searchdirectly.searchword.presentation.usecases.websites.GetWebSiteByName
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -25,8 +26,8 @@ import javax.inject.Inject
 class WebSiteViewModel @Inject constructor(
     application: Application,
     private val getWebSiteByName: GetWebSiteByName,
-    private val getSavedUrl: GetSavedUrl,
-    private val saveUrl: SaveUrl
+    private val getSavedSharedPreferencesData: GetSavedSharedPreferencesData,
+    private val saveSharedPreferencesData: SaveSharedPreferencesData
 ) :
     AndroidViewModel(application = application) {
 
@@ -64,21 +65,21 @@ class WebSiteViewModel @Inject constructor(
             }
         } else {
             _webSitesUiState.update {
-                it.copy(listState = WebState.NoErrorConnection("No internet connection"))
+                it.copy(listState = WebState.NoInternetConnection("No internet connection"))
             }
         }
     }
 
-    fun getSavedSharedPreferencesUrl() {
+    fun getSharedPreferences() {
         getSavedSharedPreferencesUrlJob?.cancel()
         getSavedSharedPreferencesUrlJob = viewModelScope.launch {
             _sharedPreferencesUiState.update {
                 it.copy(sharedPreferenceState = SharedPreferencesState.Loading)
             }
-            val getSavedUrl = getSavedUrl.invoke()
-            if (getSavedUrl.isSuccess) {
+            val getSavedPreferencesModelData = getSavedSharedPreferencesData.invoke()
+            if (getSavedPreferencesModelData.isSuccess) {
                 _sharedPreferencesUiState.update {
-                    it.copy(sharedPreferenceState = SharedPreferencesState.Success(getSavedUrl.getOrThrow()))
+                    it.copy(sharedPreferenceState = SharedPreferencesState.Success(getSavedPreferencesModelData.getOrThrow()))
                 }
 
             } else {
@@ -89,10 +90,10 @@ class WebSiteViewModel @Inject constructor(
         }
     }
 
-    fun saveSharedPreferencesUrl(url: String) {
+    fun saveSharedPreferences(sharedPreferencesModel: SharedPreferencesModel) {
         saveSharedPreferencesUrlJob?.cancel()
         saveSharedPreferencesUrlJob = viewModelScope.launch {
-            if (saveUrl.invoke(url)) {
+            if (saveSharedPreferencesData.invoke(sharedPreferencesModel)) {
                 _sharedPreferencesUiState.update {
                     it.copy(showedSharedPreferencesAddedMessage = true)
                 }

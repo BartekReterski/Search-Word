@@ -1,4 +1,4 @@
-package com.searchdirectly.searchword.domain.model
+package com.searchdirectly.searchword.domain.model.websites
 
 data class WebSites(
     var siteName: String,
