@@ -21,7 +21,12 @@
                 android:iconTint="@color/white"
                 android:title="@string/share_menu"
                 app:showAsAction="ifRoom" />
-
+            <item
+                android:id="@+id/action_open_browser"
+                android:icon="@drawable/ic_baseline_language_24"
+                android:iconTint="@color/white"
+                android:title="@string/open_link_in_web_view_menu"
+                app:showAsAction="ifRoom" />
             <item
                 android:id="@+id/action_save"
                 android:icon="@drawable/ic_baseline_save_24"

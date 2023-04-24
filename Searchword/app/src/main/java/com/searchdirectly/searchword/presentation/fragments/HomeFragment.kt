@@ -3,6 +3,7 @@ package com.searchdirectly.searchword.presentation.fragments
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -84,6 +85,7 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        resetSharedPreferences()
         setupMenu()
         setupChips()
         observeViewModel()
@@ -97,8 +99,11 @@ class HomeFragment : Fragment() {
                 val search = menu.findItem(R.id.action_search)
                 searchView = search?.actionView as SearchView
                 searchView.queryHint = getString(R.string.search_query_hint)
+                openSearchView(search)
+
                 searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                     override fun onQueryTextSubmit(query: String?): Boolean {
+                        resetSharedPreferences()
                         querySearch = query
                         if (querySearch.isNullOrEmpty().not() && selectedChips()) {
                             viewModel.getWebsiteDataByName(savedCurrentSiteName)
@@ -119,6 +124,22 @@ class HomeFragment : Fragment() {
                     }
                 })
             }
+            override fun onPrepareMenu(menu: Menu) {
+                if(binding.webview.isVisible){
+                    view?.hideSoftInput()
+                    menu.findItem(R.id.action_save).isVisible = true
+                    menu.findItem(R.id.action_share).isVisible = true
+                    menu.findItem(R.id.action_more).isVisible = true
+                    menu.findItem(R.id.action_open_browser).isVisible = true
+                    menu.findItem(R.id.action_about).isVisible = true
+                }else{
+                    menu.findItem(R.id.action_save).isVisible = false
+                    menu.findItem(R.id.action_share).isVisible = false
+                    menu.findItem(R.id.action_more).isVisible = false
+                    menu.findItem(R.id.action_open_browser).isVisible = false
+                    menu.findItem(R.id.action_about).isVisible = false
+                }
+            }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
@@ -133,10 +154,19 @@ class HomeFragment : Fragment() {
                         saveLinkInDatabase()
                         true
                     }
+                    R.id.action_open_browser -> {
+                        openLinkInBrowser()
+                        true
+                    }
                     else -> false
                 }
             }
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+    }
+
+    private fun openSearchView(search: MenuItem) {
+        //search.expandActionView()
+        searchView.setQuery(querySearch, false)
     }
 
     private fun observeViewModel() {
@@ -240,8 +270,9 @@ class HomeFragment : Fragment() {
         override fun onProgressChanged(view: WebView?, newProgress: Int) {
             binding.progressBarHorizontal.visibility = View.VISIBLE
             binding.progressBarHorizontal.setProgress(newProgress, true)
-            if(newProgress == 100){
+            if (newProgress == 100) {
                 binding.progressBarHorizontal.visibility = View.GONE
+                //activity?.invalidateOptionsMenu()
             }
         }
     }
@@ -258,7 +289,7 @@ class HomeFragment : Fragment() {
         override fun shouldOverrideUrlLoading(
             view: WebView?,
             request: WebResourceRequest
-        ): Boolean {
+        ):  Boolean {
             val uri = request.url
             view?.loadUrl(uri.toString())
             return false
@@ -272,6 +303,7 @@ class HomeFragment : Fragment() {
             binding.textViewHelper.visibility = View.GONE
             binding.imageViewHelper.visibility = View.GONE
             view.hideSoftInput()
+            //activity?.invalidateOptionsMenu()
         }
     }
 
@@ -283,7 +315,9 @@ class HomeFragment : Fragment() {
                         binding.chipGroup.findViewById<Chip>(binding.chipGroup.checkedChipId).text.toString()
                     if (selectedChipText == savedCurrentSiteName) {
                         observeViewModel()
+                        resetSharedPreferences()
                     }
+                    resetSharedPreferences()
                     savedCurrentSiteName = selectedChipText
                     viewModel.getWebsiteDataByName(selectedChipText)
                 } else {
@@ -300,6 +334,11 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private fun resetSharedPreferences() {
+        viewModel.saveSharedPreferences(SharedPreferencesModel("", ""))
+        viewModel.getSharedPreferences()
+    }
+
     //hide keyboard
     fun View.hideSoftInput() {
         val inputMethodManager =
@@ -308,9 +347,13 @@ class HomeFragment : Fragment() {
     }
 
     fun closeWebView(context: Context) {
-        binding.webview.visibility = View.GONE
-        binding.textViewHelper.visibility = View.VISIBLE
-        binding.imageViewHelper.visibility = View.VISIBLE
+        if (binding.webview.isVisible) {
+            binding.webview.visibility = View.GONE
+            binding.textViewHelper.visibility = View.VISIBLE
+            binding.imageViewHelper.visibility = View.VISIBLE
+            searchView.setQuery("", false)
+
+        }
     }
 
     fun refreshWebView(context: Context) {
@@ -355,6 +398,28 @@ class HomeFragment : Fragment() {
                     creationTime = savedTime
                 )
             )
+        } else {
+            Toast.makeText(
+                context,
+                R.string.save_info,
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
+
+    private fun openLinkInBrowser() {
+        if (finalUrl.isNullOrEmpty().not() && binding.webview.isVisible) {
+            val urlIntent = Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse(binding.webview.url)
+            )
+            startActivity(urlIntent)
+        } else {
+            Toast.makeText(
+                context,
+                R.string.open_in_browser,
+                Toast.LENGTH_LONG
+            ).show()
         }
     }
 
