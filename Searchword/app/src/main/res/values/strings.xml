@@ -55,9 +55,9 @@
     <string name="instagram_name">Instagram</string>
     <string name="yandex_name">Yandex</string>
     <string name="duck_duck_go">DuckDuckGo</string>
-    <string name="netflix">Netflix</string>
-    <string name="spotify">Spotify</string>
-    <string name="google_maps">Google Maps</string>
+    <string name="netflix_name">Netflix</string>
+    <string name="spotify_name">Spotify</string>
+    <string name="google_maps_name">Google Maps</string>
     <string name="google_value">https://www.google.com/search?</string>
     <string name="google_endpoint">q=</string>
     <string name="bing_value">https://www.bing.com/search?</string>
@@ -82,4 +82,9 @@
     <string name="ebay_endpoint">nkw=</string>
     <string name="pinterest_value">https://pl.pinterest.com/search/pins/?</string>
     <string name="pinterest_endpoint">q=</string>
+    <string name="netflix_value">https://www.netflix.com/search?</string>
+    <string name="netflix_endpoint">q=</string>
+    <string name="spotify_value">https://open.spotify.com/search/results/</string>
+    <string name="google_maps_value">https://google.com/maps/search/</string>
+    <string name="HomeFragmentTitle">Search word</string>
 </resources>

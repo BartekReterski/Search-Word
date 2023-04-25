@@ -36,6 +36,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.text.DateFormat
 
+
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
 
@@ -53,7 +54,7 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        activity?.title = "Search word"
+        activity?.title = getString(R.string.HomeFragmentTitle)
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -99,12 +100,11 @@ class HomeFragment : Fragment() {
                 val search = menu.findItem(R.id.action_search)
                 searchView = search?.actionView as SearchView
                 searchView.queryHint = getString(R.string.search_query_hint)
-                openSearchView(search)
 
                 searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                     override fun onQueryTextSubmit(query: String?): Boolean {
-                        resetSharedPreferences()
                         querySearch = query
+                        resetSharedPreferences()
                         if (querySearch.isNullOrEmpty().not() && selectedChips()) {
                             viewModel.getWebsiteDataByName(savedCurrentSiteName)
                             observeViewModel()
@@ -124,22 +124,10 @@ class HomeFragment : Fragment() {
                     }
                 })
             }
-            override fun onPrepareMenu(menu: Menu) {
-                if(binding.webview.isVisible){
-                    view?.hideSoftInput()
-                    menu.findItem(R.id.action_save).isVisible = true
-                    menu.findItem(R.id.action_share).isVisible = true
-                    menu.findItem(R.id.action_more).isVisible = true
-                    menu.findItem(R.id.action_open_browser).isVisible = true
-                    menu.findItem(R.id.action_about).isVisible = true
-                }else{
-                    menu.findItem(R.id.action_save).isVisible = false
-                    menu.findItem(R.id.action_share).isVisible = false
-                    menu.findItem(R.id.action_more).isVisible = false
-                    menu.findItem(R.id.action_open_browser).isVisible = false
-                    menu.findItem(R.id.action_about).isVisible = false
-                }
-            }
+
+//            override fun onPrepareMenu(menu: Menu) {
+//                menu.findItem(R.id.action_more).isVisible = binding.webview.isVisible
+//            }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
@@ -162,11 +150,6 @@ class HomeFragment : Fragment() {
                 }
             }
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
-    }
-
-    private fun openSearchView(search: MenuItem) {
-        //search.expandActionView()
-        searchView.setQuery(querySearch, false)
     }
 
     private fun observeViewModel() {
@@ -267,12 +250,22 @@ class HomeFragment : Fragment() {
     }
 
     inner class WebChromeClient : android.webkit.WebChromeClient() {
+
+        override fun onPermissionRequest(request: PermissionRequest) {
+            val resources = request.resources
+            for (i in resources?.indices!!) {
+                if (PermissionRequest.RESOURCE_PROTECTED_MEDIA_ID == resources[i]) {
+                    request.grant(resources)
+                    return
+                }
+            }
+            super.onPermissionRequest(request)
+        }
         override fun onProgressChanged(view: WebView?, newProgress: Int) {
             binding.progressBarHorizontal.visibility = View.VISIBLE
             binding.progressBarHorizontal.setProgress(newProgress, true)
             if (newProgress == 100) {
                 binding.progressBarHorizontal.visibility = View.GONE
-                //activity?.invalidateOptionsMenu()
             }
         }
     }
@@ -289,7 +282,7 @@ class HomeFragment : Fragment() {
         override fun shouldOverrideUrlLoading(
             view: WebView?,
             request: WebResourceRequest
-        ):  Boolean {
+        ): Boolean {
             val uri = request.url
             view?.loadUrl(uri.toString())
             return false
@@ -298,13 +291,23 @@ class HomeFragment : Fragment() {
         // ProgressBar will disappear once page is loaded
         override fun onPageFinished(view: WebView, url: String) {
             super.onPageFinished(view, url)
-            binding.progressBarHorizontal.visibility = View.GONE
-            binding.webview.visibility = View.VISIBLE
-            binding.textViewHelper.visibility = View.GONE
-            binding.imageViewHelper.visibility = View.GONE
-            view.hideSoftInput()
-            //activity?.invalidateOptionsMenu()
+            manipulateLayoutVisibilityOnPageFinished(view)
+
         }
+    }
+
+    private fun manipulateLayoutVisibilityOnPageFinished(view: WebView) {
+        binding.progressBarHorizontal.visibility = View.GONE
+        binding.webview.visibility = View.VISIBLE
+        binding.textViewHelper.visibility = View.GONE
+        binding.imageViewHelper.visibility = View.GONE
+//        if (binding.webview.isVisible) {
+//            val bottomNavigationView =
+//                requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation)
+//            bottomNavigationView.visibility = View.VISIBLE
+//            activity?.invalidateOptionsMenu()
+//        }
+        view.hideSoftInput()
     }
 
     private fun setupChips() {
@@ -340,19 +343,23 @@ class HomeFragment : Fragment() {
     }
 
     //hide keyboard
-    fun View.hideSoftInput() {
+    private fun View.hideSoftInput() {
         val inputMethodManager =
             context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(windowToken, 0)
     }
 
+//    private fun Fragment.hideKeyboard() = ViewCompat.getWindowInsetsController(requireView())
+//        ?.hide(WindowInsetsCompat.Type.ime())
+
     fun closeWebView(context: Context) {
         if (binding.webview.isVisible) {
+            view?.hideSoftInput()
             binding.webview.visibility = View.GONE
             binding.textViewHelper.visibility = View.VISIBLE
             binding.imageViewHelper.visibility = View.VISIBLE
-            searchView.setQuery("", false)
-
+            //searchView.setQuery("", false)
+            //hideKeyboard()
         }
     }
 
