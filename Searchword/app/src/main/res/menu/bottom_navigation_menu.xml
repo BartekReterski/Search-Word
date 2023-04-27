@@ -4,7 +4,7 @@
     <item
         android:id="@+id/action_back"
         android:icon="@drawable/ic_baseline_arrow_back_24"
-        android:title="@string/saved_back_action_menu" />
+        android:title="@string/action_menu_back" />
 
     <item
         android:id="@+id/action_close_browser"
@@ -17,14 +17,14 @@
         android:title="@string/refresh_menu" />
 
     <item
-        android:id="@+id/action_bookmark"
-        android:icon="@drawable/ic_baseline_bookmark_24"
-        android:title="@string/saved_websites_menu" />
-
-    <item
         android:id="@+id/action_home"
         android:icon="@drawable/ic_baseline_home_24"
-        android:visible="false"
-        android:title="@string/home_menu" />
+        android:title="@string/home_menu"
+        android:visible="false" />
+
+    <item
+        android:id="@+id/action_more"
+        android:icon="@drawable/ic_baseline_more_vert_24"
+        android:title="@string/more_menu" />
 
 </menu>

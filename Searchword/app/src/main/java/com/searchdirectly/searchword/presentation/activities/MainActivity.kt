@@ -1,7 +1,12 @@
 package com.searchdirectly.searchword.presentation.activities
 
-import android.content.Intent
+import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
+import android.view.ContextThemeWrapper
+import android.view.Gravity
+import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -33,28 +38,21 @@ class MainActivity : AppCompatActivity() {
                     loadFragment(HomeFragment())
                     true
                 }
-                R.id.action_bookmark -> {
-                    val intent = Intent(this, SavedWebsitesActivity::class.java)
-                    startActivity(intent)
-                    true
-                }
                 R.id.action_back -> {
-                    val fragment: HomeFragment =
-                        supportFragmentManager.findFragmentById(R.id.frameLayout) as HomeFragment
-                    fragment.backArrowButton(this)
+                    homeFragment().backArrowButton(this)
                     true
                 }
                 R.id.action_close_browser -> {
-                    val fragment: HomeFragment =
-                        supportFragmentManager.findFragmentById(R.id.frameLayout) as HomeFragment
-                    fragment.closeWebView(this)
-                    loadFragment(HomeFragment())
+                   homeFragment().closeWebView(this)
+                    //loadFragment(HomeFragment())
                     true
                 }
                 R.id.action_refresh -> {
-                    val fragment: HomeFragment =
-                        supportFragmentManager.findFragmentById(R.id.frameLayout) as HomeFragment
-                    fragment.refreshWebView(this)
+                    homeFragment().refreshWebView(this)
+                    true
+                }
+                R.id.action_more -> {
+                    popupMenuSetup()
                     true
                 }
                 else -> {
@@ -66,6 +64,48 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
             }
+        }
+    }
+
+    private fun homeFragment(): HomeFragment {
+        return supportFragmentManager.findFragmentById(R.id.frameLayout) as HomeFragment
+    }
+
+    @SuppressLint("DiscouragedPrivateApi")
+    private fun popupMenuSetup() {
+        val wrapper: Context = ContextThemeWrapper(this, R.style.CustomPopUpStyle)
+        val popupMenu = PopupMenu(wrapper, binding.bottomNavigation,Gravity.END)
+        popupMenu.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.action_share -> {
+                    homeFragment().shareUrl(this)
+                    true
+                }
+                R.id.action_open_browser -> {
+                    homeFragment().openLinkInBrowser(this)
+                    true
+                }
+                R.id.action_save -> {
+                    homeFragment().saveLinkInDatabase(this)
+                    true
+                }
+                else -> false
+            }
+        }
+
+        popupMenu.inflate(R.menu.popup_bottom_navigation_menu)
+
+        try {
+            val fieldMPopup = PopupMenu::class.java.getDeclaredField("mPopup")
+            fieldMPopup.isAccessible = true
+            val mPopup = fieldMPopup.get(popupMenu)
+            mPopup.javaClass
+                .getDeclaredMethod("setForceShowIcon", Boolean::class.java)
+                .invoke(mPopup, true)
+        } catch (e: Exception) {
+            Log.e("Main", "Error showing menu icons.", e)
+        } finally {
+            popupMenu.show()
         }
     }
 

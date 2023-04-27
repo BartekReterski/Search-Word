@@ -12,7 +12,7 @@
     <string name="copy_link">Copy link</string>
     <string name="delete_link">Delete</string>
     //app info
-    <string name="saved_back_action_menu">Back</string>
+    <string name="action_menu_back">Back</string>
     <string name="todo">TODO</string>
     <string name="no_internet_info">Something was wrong, Please check your internet connection</string>
     <string name="what_to_do_info">Please type the search phrase and choose a website to search for it</string>
@@ -35,8 +35,12 @@
     <string name="delete_dialog_confirmation">Do you want to delete link? \n"</string>
     <string name="deleted_info">Deleted</string>
     <string name="copied_link_id">Copied Link</string>
-    <string name="search_query_hint">Type phrase and choose website to search</string>
+    <string name="search_query_hint">Type phrase…</string>
     <string name="open_link_in_web_view_menu">Open in browser</string>
+    <string name="save_info">There is a problem with save link. Please try when search text is not empty and browser is visible</string>
+    <string name="open_in_browser">There is a problem with save open link in browser. Please try again later</string>
+    <string name="HomeFragmentTitle">Search word</string>
+    <string name="action_menu_forward">Forward</string>
     //websites names, values and queries
     <string name="google_name">Google</string>
     <string name="yahoo_name">Yahoo</string>
@@ -53,6 +57,9 @@
     <string name="instagram_name">Instagram</string>
     <string name="yandex_name">Yandex</string>
     <string name="duck_duck_go">DuckDuckGo</string>
+    <string name="netflix_name">Netflix</string>
+    <string name="spotify_name">Spotify</string>
+    <string name="google_maps_name">Google Maps</string>
     <string name="google_value">https://www.google.com/search?</string>
     <string name="google_endpoint">q=</string>
     <string name="bing_value">https://www.bing.com/search?</string>
@@ -77,4 +84,8 @@
     <string name="ebay_endpoint">nkw=</string>
     <string name="pinterest_value">https://pl.pinterest.com/search/pins/?</string>
     <string name="pinterest_endpoint">q=</string>
+    <string name="netflix_value">https://www.netflix.com/search?</string>
+    <string name="netflix_endpoint">q=</string>
+    <string name="spotify_value">https://open.spotify.com/search/results/</string>
+    <string name="google_maps_value">https://google.com/maps/search/</string>
 </resources>

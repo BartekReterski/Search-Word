@@ -5,6 +5,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.searchdirectly.searchword.domain.model.preferences.SharedPreferencesModel
 import com.searchdirectly.searchword.presentation.uistates.preferences.SharedPreferencesState
@@ -27,7 +28,8 @@ class WebSiteViewModel @Inject constructor(
     application: Application,
     private val getWebSiteByName: GetWebSiteByName,
     private val getSharedPreferencesData: GetSharedPreferencesData,
-    private val saveSharedPreferencesData: SaveSharedPreferencesData
+    private val saveSharedPreferencesData: SaveSharedPreferencesData,
+    private val state: SavedStateHandle
 ) :
     AndroidViewModel(application = application) {
 
@@ -79,7 +81,11 @@ class WebSiteViewModel @Inject constructor(
             val getSavedPreferencesModelData = getSharedPreferencesData.invoke()
             if (getSavedPreferencesModelData.isSuccess) {
                 _sharedPreferencesUiState.update {
-                    it.copy(sharedPreferenceState = SharedPreferencesState.Success(getSavedPreferencesModelData.getOrThrow()))
+                    it.copy(
+                        sharedPreferenceState = SharedPreferencesState.Success(
+                            getSavedPreferencesModelData.getOrThrow()
+                        )
+                    )
                 }
 
             } else {
@@ -100,6 +106,20 @@ class WebSiteViewModel @Inject constructor(
             }
 
         }
+    }
+
+    // In your viewmodel
+    fun saveName(link: String?, query: String?) {
+        state["Url"] = link
+        state["Query"] = query
+    }
+
+    // In your viewmodel
+    fun getName(): List<String> {
+        val mutableList = mutableListOf<String>()
+        mutableList.add(state.get<String>("Url").toString())
+        mutableList.add(state.get<String>("Query").toString())
+        return mutableList
     }
 
     fun addedSharedPreferencesMessageInfo() {

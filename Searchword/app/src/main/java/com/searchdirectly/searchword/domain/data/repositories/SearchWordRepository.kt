@@ -88,6 +88,20 @@ class SearchWordRepository @Inject constructor(@ApplicationContext val context: 
         )
         list.add(
             WebSites(
+                context.getString(R.string.spotify_name),
+                context.getString(R.string.spotify_value),
+                ""
+            )
+        )
+        list.add(
+            WebSites(
+                context.getString(R.string.google_maps_name),
+                context.getString(R.string.google_maps_value),
+                ""
+            )
+        )
+        list.add(
+            WebSites(
                 context.getString(R.string.reddit_name),
                 context.getString(R.string.reddit_value),
                 context.getString(
@@ -146,12 +160,12 @@ class SearchWordRepository @Inject constructor(@ApplicationContext val context: 
         return true
     }
 
-    override suspend fun getSavedUrl(): SharedPreferencesModel{
+    override suspend fun getSavedUrl(): SharedPreferencesModel {
         val sh: SharedPreferences =
             context.getSharedPreferences(
                 context.getString(R.string.Shared_pref_id),
                 Context.MODE_PRIVATE
             )
-       return SharedPreferencesModel(sh.getString("url",""),sh.getString("query",""))
+        return SharedPreferencesModel(sh.getString("url", ""), sh.getString("query", ""))
     }
 }
