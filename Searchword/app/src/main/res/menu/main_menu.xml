@@ -10,29 +10,18 @@
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="always|collapseActionView" />
     <item
+        android:id="@+id/action_bookmark"
+        android:icon="@drawable/ic_baseline_bookmark_24"
+        android:title="@string/saved_websites_menu"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/action_more"
-        android:icon="@drawable/ic_baseline_more_vert_24"
+        android:icon="@drawable/ic_baseline_more_vert_white_24"
         android:title="@string/more_menu"
         app:showAsAction="always">
         <menu>
-            <item
-                android:id="@+id/action_share"
-                android:icon="@drawable/ic_baseline_share_24"
-                android:iconTint="@color/white"
-                android:title="@string/share_menu"
-                app:showAsAction="ifRoom" />
-            <item
-                android:id="@+id/action_open_browser"
-                android:icon="@drawable/ic_baseline_language_24"
-                android:iconTint="@color/white"
-                android:title="@string/open_link_in_web_view_menu"
-                app:showAsAction="ifRoom" />
-            <item
-                android:id="@+id/action_save"
-                android:icon="@drawable/ic_baseline_save_24"
-                android:iconTint="@color/white"
-                android:title="@string/save_menu"
-                app:showAsAction="ifRoom" />
+
             <item
                 android:id="@+id/action_about"
                 android:title="@string/about_menu"

@@ -16,15 +16,14 @@ import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.*
 import com.google.android.material.chip.Chip
 import com.searchdirectly.searchword.R
 import com.searchdirectly.searchword.databinding.FragmentHomeBinding
 import com.searchdirectly.searchword.domain.model.preferences.SharedPreferencesModel
 import com.searchdirectly.searchword.domain.model.room.SavedLinks
 import com.searchdirectly.searchword.domain.model.websites.WebSites
+import com.searchdirectly.searchword.presentation.activities.SavedWebsitesActivity
 import com.searchdirectly.searchword.presentation.uistates.preferences.SharedPreferencesState
 import com.searchdirectly.searchword.presentation.uistates.websites.WebState
 import com.searchdirectly.searchword.presentation.viewmodels.room.SavedLinksViewModel
@@ -48,6 +47,11 @@ class HomeFragment : Fragment() {
     private lateinit var searchView: SearchView
 
     private val viewModel: WebSiteViewModel by viewModels()
+
+//    private val viewModel: WebSiteViewModel by viewModels {
+//        SavedStateViewModelFactory(activity?.applicationContext as Application, this)
+//    }
+
     private val viewModelSavedLinks: SavedLinksViewModel by viewModels()
 
     override fun onCreateView(
@@ -62,7 +66,11 @@ class HomeFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         try {
-            viewModel.getSharedPreferences()
+            viewModel.getName()
+            Log.e("LISTA Z WARTOSCI", viewModel.getName()[0] + "     " + viewModel.getName()[1])
+            //viewModel.getSharedPreferences()
+            finalUrl = viewModel.getName()[0]
+            querySearch = viewModel.getName()[1]
             binding.webview.loadUrl(finalUrl!!)
             searchView.setQuery(querySearch, false)
 
@@ -76,21 +84,24 @@ class HomeFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        viewModel.saveSharedPreferences(
-            SharedPreferencesModel(
-                binding.webview.url,
-                searchView.query.toString()
-            )
-        )
+        viewModel.saveName(binding.webview.url, searchView.query.toString())
+//        viewModel.saveSharedPreferences(
+//            SharedPreferencesModel(
+//                binding.webview.url,
+//                searchView.query.toString()
+//            )
+//        )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        resetSharedPreferences()
+        //resetSharedPreferences()
         setupMenu()
         setupChips()
         observeViewModel()
         preventBackButton()
+        //reference to ViewModel which is connected to this fragment
+        //viewModel = ViewModelProviders.of(this)[WebSiteViewModel::class.java]
     }
 
     private fun setupMenu() {
@@ -104,7 +115,7 @@ class HomeFragment : Fragment() {
                 searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                     override fun onQueryTextSubmit(query: String?): Boolean {
                         querySearch = query
-                        resetSharedPreferences()
+                        //resetSharedPreferences()
                         if (querySearch.isNullOrEmpty().not() && selectedChips()) {
                             viewModel.getWebsiteDataByName(savedCurrentSiteName)
                             observeViewModel()
@@ -134,16 +145,9 @@ class HomeFragment : Fragment() {
                     R.id.action_about -> {
                         true
                     }
-                    R.id.action_share -> {
-                        shareUrl()
-                        true
-                    }
-                    R.id.action_save -> {
-                        saveLinkInDatabase()
-                        true
-                    }
-                    R.id.action_open_browser -> {
-                        openLinkInBrowser()
+                    R.id.action_bookmark -> {
+                        val intent = Intent(activity, SavedWebsitesActivity::class.java)
+                        startActivity(intent)
                         true
                     }
                     else -> false
@@ -261,6 +265,7 @@ class HomeFragment : Fragment() {
             }
             super.onPermissionRequest(request)
         }
+
         override fun onProgressChanged(view: WebView?, newProgress: Int) {
             binding.progressBarHorizontal.visibility = View.VISIBLE
             binding.progressBarHorizontal.setProgress(newProgress, true)
@@ -318,9 +323,9 @@ class HomeFragment : Fragment() {
                         binding.chipGroup.findViewById<Chip>(binding.chipGroup.checkedChipId).text.toString()
                     if (selectedChipText == savedCurrentSiteName) {
                         observeViewModel()
-                        resetSharedPreferences()
+                        //resetSharedPreferences()
                     }
-                    resetSharedPreferences()
+                    //resetSharedPreferences()
                     savedCurrentSiteName = selectedChipText
                     viewModel.getWebsiteDataByName(selectedChipText)
                 } else {
@@ -358,6 +363,7 @@ class HomeFragment : Fragment() {
             binding.webview.visibility = View.GONE
             binding.textViewHelper.visibility = View.VISIBLE
             binding.imageViewHelper.visibility = View.VISIBLE
+            binding.webview.destroy()
             //searchView.setQuery("", false)
             //hideKeyboard()
         }
@@ -371,7 +377,7 @@ class HomeFragment : Fragment() {
         }
     }
 
-    fun shareUrl() {
+    fun shareUrl(context: Context) {
         if (finalUrl.isNullOrEmpty().not() && binding.webview.isVisible) {
             val shareUrl = binding.webview.url
             val sendIntent: Intent = Intent().apply {
@@ -392,7 +398,7 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun saveLinkInDatabase() {
+    fun saveLinkInDatabase(context: Context) {
         if (finalUrl.isNullOrEmpty().not() && binding.webview.isVisible) {
             val currentWebLink = binding.webview.url
             val currentLinkTitle = binding.webview.title
@@ -414,7 +420,7 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun openLinkInBrowser() {
+    fun openLinkInBrowser(context: Context) {
         if (finalUrl.isNullOrEmpty().not() && binding.webview.isVisible) {
             val urlIntent = Intent(
                 Intent.ACTION_VIEW,
@@ -436,14 +442,16 @@ class HomeFragment : Fragment() {
             viewLifecycleOwner,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    if (binding.webview.canGoBack()) binding.webview.goBack()
+                    backArrowButton(context = context!!)
                 }
             })
     }
 
     //icon back button on bottom navigation bar
     fun backArrowButton(context: Context) {
-        if (binding.webview.canGoBack()) binding.webview.goBack()
+        if(binding.webview.isVisible){
+            if (binding.webview.canGoBack()) binding.webview.goBack()
+        }
     }
 
     //check if at least one chip is selected
