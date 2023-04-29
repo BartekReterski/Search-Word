@@ -43,8 +43,7 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.action_close_browser -> {
-                   homeFragment().closeWebView(this)
-                    //loadFragment(HomeFragment())
+                    homeFragment().closeWebView(this)
                     true
                 }
                 R.id.action_refresh -> {
@@ -74,7 +73,7 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("DiscouragedPrivateApi")
     private fun popupMenuSetup() {
         val wrapper: Context = ContextThemeWrapper(this, R.style.CustomPopUpStyle)
-        val popupMenu = PopupMenu(wrapper, binding.bottomNavigation,Gravity.END)
+        val popupMenu = PopupMenu(wrapper, binding.bottomNavigation, Gravity.END)
         popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_share -> {
@@ -114,5 +113,6 @@ class MainActivity : AppCompatActivity() {
         transaction.replace(R.id.frameLayout, fragment)
         transaction.commit()
     }
+
 }
 

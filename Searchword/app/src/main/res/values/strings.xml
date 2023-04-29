@@ -41,6 +41,8 @@
     <string name="open_in_browser">There is a problem with save open link in browser. Please try again later</string>
     <string name="HomeFragmentTitle">Search word</string>
     <string name="action_menu_forward">Forward</string>
+    <string name="exit_app">Exit app</string>
+    <string name="exit_app_confirm">Do you really want to close app?</string>
     //websites names, values and queries
     <string name="google_name">Google</string>
     <string name="yahoo_name">Yahoo</string>

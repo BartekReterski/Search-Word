@@ -2,6 +2,7 @@ package com.searchdirectly.searchword.domain.di
 
 import android.app.Application
 import android.content.Context
+import androidx.lifecycle.SavedStateHandle
 import com.searchdirectly.searchword.domain.data.interfaces.SearchWordInterface
 import com.searchdirectly.searchword.domain.data.repositories.RoomDataSource
 import com.searchdirectly.searchword.domain.data.repositories.RoomRepository
@@ -19,8 +20,11 @@ class RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideSearchWordRepository(@ApplicationContext appContext: Context): SearchWordInterface =
-        SearchWordRepository(context = appContext)
+    fun provideSearchWordRepository(
+        @ApplicationContext appContext: Context,
+        savedStateHandle: SavedStateHandle
+    ): SearchWordInterface =
+        SearchWordRepository(context = appContext, state = savedStateHandle)
 
     @Provides
     @Singleton
