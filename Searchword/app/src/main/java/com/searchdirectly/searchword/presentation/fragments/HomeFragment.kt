@@ -66,8 +66,6 @@ class HomeFragment : Fragment() {
             getSaveState()
             if (finalUrl != "null" || querySearch != "null") {
                 binding.webview.loadUrl(finalUrl!!)
-                searchView.setQuery(querySearch,false)
-                //requireActivity().invalidateOptionsMenu()
             }
 
         } catch (e: java.lang.Exception) {
@@ -97,7 +95,8 @@ class HomeFragment : Fragment() {
                 menuInflater.inflate(R.menu.main_menu, menu)
                 val search = menu.findItem(R.id.action_search)
                 searchView = search?.actionView as SearchView
-                searchView.queryHint = getString(R.string.search_query_hint)
+                search.expandActionView()
+                //configSearchView(search)
                 searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                     override fun onQueryTextSubmit(query: String?): Boolean {
                         querySearch = query
@@ -135,22 +134,16 @@ class HomeFragment : Fragment() {
                     else -> false
                 }
             }
-
-//            override fun onPrepareMenu(menu: Menu) {
-//                if (querySearch != "null" || querySearch!!.isEmpty()) {
-//                    val searchMenuItem = menu.findItem(R.id.action_search)
-//                    searchMenuItem.expandActionView()
-//                    searchView.setQuery(querySearch, false)
-//                }
-//            }
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
-//    private fun openSearchView() {
-//        val item: MenuItem? = menuNew.findItem(R.id.action_search)
-//        item?.expandActionView()
-//        searchView.setQuery(querySearch, false)
-//    }
+    private fun configSearchView(search: MenuItem) {
+        if (querySearch != "null" && querySearch!!.isEmpty().not()) {
+            searchView.queryHint = getString(R.string.search_query_hint)
+            search.expandActionView()
+            searchView.setQuery(querySearch, false)
+        }
+    }
 
     private fun observeViewModel() {
         //observe Website data from repository
@@ -370,8 +363,6 @@ class HomeFragment : Fragment() {
             binding.textViewHelper.visibility = View.VISIBLE
             binding.imageViewHelper.visibility = View.VISIBLE
             showBottomNavigation(false)
-            //searchView.setQuery("", false)
-            //hideKeyboard()
         }
     }
 
