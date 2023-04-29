@@ -47,7 +47,7 @@ class HomeFragment : Fragment() {
     private var savedCurrentSiteName: String = ""
     private var finalUrl: String? = ""
     private lateinit var searchView: SearchView
-    
+
     private val viewModel: WebSiteViewModel by viewModels()
     private val viewModelSavedLinks: SavedLinksViewModel by viewModels()
 
