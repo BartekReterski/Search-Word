@@ -173,7 +173,6 @@ class HomeFragment : Fragment() {
                 viewModel.saveStateHandleUiState.distinctUntilChangedBy { it.showedSaveStateHandleAddedMessage }
                     .collectLatest {
                         if (it.showedSaveStateHandleAddedMessage) {
-                            // Toast.makeText(context, "Saved SP", Toast.LENGTH_SHORT).show()
                             viewModel.addedSavedSateInfo()
                         }
                     }
@@ -373,7 +372,6 @@ class HomeFragment : Fragment() {
                 putExtra(Intent.EXTRA_TEXT, shareUrl)
                 type = "text/plain"
             }
-            saveSaveState()
             val shareIntent = Intent.createChooser(sendIntent, null)
             startActivity(shareIntent)
             refreshWebView(requireContext())
