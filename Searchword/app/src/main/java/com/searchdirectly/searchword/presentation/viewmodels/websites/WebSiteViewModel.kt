@@ -5,15 +5,14 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.searchdirectly.searchword.domain.model.preferences.SharedPreferencesModel
-import com.searchdirectly.searchword.presentation.uistates.preferences.SharedPreferencesState
-import com.searchdirectly.searchword.presentation.uistates.preferences.SharedPreferencesUiState
+import com.searchdirectly.searchword.domain.model.savestate.SaveState
+import com.searchdirectly.searchword.presentation.uistates.savestate.SaveStateHandle
+import com.searchdirectly.searchword.presentation.uistates.savestate.SaveStateHandleUiState
 import com.searchdirectly.searchword.presentation.uistates.websites.WebSitesUiState
 import com.searchdirectly.searchword.presentation.uistates.websites.WebState
-import com.searchdirectly.searchword.presentation.usecases.preferences.GetSharedPreferencesData
-import com.searchdirectly.searchword.presentation.usecases.preferences.SaveSharedPreferencesData
+import com.searchdirectly.searchword.presentation.usecases.savestate.GetSaveStateData
+import com.searchdirectly.searchword.presentation.usecases.savestate.SaveStateData
 import com.searchdirectly.searchword.presentation.usecases.websites.GetWebSiteByName
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -25,11 +24,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WebSiteViewModel @Inject constructor(
+    private val saveStateData: SaveStateData,
     application: Application,
     private val getWebSiteByName: GetWebSiteByName,
-    private val getSharedPreferencesData: GetSharedPreferencesData,
-    private val saveSharedPreferencesData: SaveSharedPreferencesData,
-    private val state: SavedStateHandle
+    private val getSaveStateData: GetSaveStateData,
 ) :
     AndroidViewModel(application = application) {
 
@@ -39,12 +37,13 @@ class WebSiteViewModel @Inject constructor(
     private val _webSitesUiState = MutableStateFlow(WebSitesUiState())
     val webSitesUiState: StateFlow<WebSitesUiState> = _webSitesUiState
 
-    private val _sharedPreferencesUiState = MutableStateFlow(SharedPreferencesUiState())
-    val sharedPreferencesUiState: StateFlow<SharedPreferencesUiState> = _sharedPreferencesUiState
+    private val _saveStateHandleUiState = MutableStateFlow(SaveStateHandleUiState())
+    val saveStateHandleUiState: StateFlow<SaveStateHandleUiState> = _saveStateHandleUiState
 
     private var getWebSiteByNameJob: Job? = null
-    private var getSavedSharedPreferencesUrlJob: Job? = null
-    private var saveSharedPreferencesUrlJob: Job? = null
+
+    private var getSavedStateJob: Job? = null
+    private var saveSavedStateJob: Job? = null
 
     fun getWebsiteDataByName(webSiteName: String) {
         if (isNetworkAvailable(context)) {
@@ -72,62 +71,6 @@ class WebSiteViewModel @Inject constructor(
         }
     }
 
-    fun getSharedPreferences() {
-        getSavedSharedPreferencesUrlJob?.cancel()
-        getSavedSharedPreferencesUrlJob = viewModelScope.launch {
-            _sharedPreferencesUiState.update {
-                it.copy(sharedPreferenceState = SharedPreferencesState.Loading)
-            }
-            val getSavedPreferencesModelData = getSharedPreferencesData.invoke()
-            if (getSavedPreferencesModelData.isSuccess) {
-                _sharedPreferencesUiState.update {
-                    it.copy(
-                        sharedPreferenceState = SharedPreferencesState.Success(
-                            getSavedPreferencesModelData.getOrThrow()
-                        )
-                    )
-                }
-
-            } else {
-                _sharedPreferencesUiState.update {
-                    it.copy(sharedPreferenceState = SharedPreferencesState.Error("There is a problem with getting saved Url"))
-                }
-            }
-        }
-    }
-
-    fun saveSharedPreferences(sharedPreferencesModel: SharedPreferencesModel) {
-        saveSharedPreferencesUrlJob?.cancel()
-        saveSharedPreferencesUrlJob = viewModelScope.launch {
-            if (saveSharedPreferencesData.invoke(sharedPreferencesModel)) {
-                _sharedPreferencesUiState.update {
-                    it.copy(showedSharedPreferencesAddedMessage = true)
-                }
-            }
-
-        }
-    }
-
-    // In your viewmodel
-    fun saveName(link: String?, query: String?) {
-        state["Url"] = link
-        state["Query"] = query
-    }
-
-    // In your viewmodel
-    fun getName(): List<String> {
-        val mutableList = mutableListOf<String>()
-        mutableList.add(state.get<String>("Url").toString())
-        mutableList.add(state.get<String>("Query").toString())
-        return mutableList
-    }
-
-    fun addedSharedPreferencesMessageInfo() {
-        _sharedPreferencesUiState.update {
-            it.copy(showedSharedPreferencesAddedMessage = false)
-        }
-    }
-
     private fun isNetworkAvailable(context: Context): Boolean {
         val connectivityManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -141,6 +84,48 @@ class WebSiteViewModel @Inject constructor(
             //for check internet over Bluetooth
             actNw.hasTransport(NetworkCapabilities.TRANSPORT_BLUETOOTH) -> true
             else -> false
+        }
+    }
+
+    fun getSavedState() {
+        getSavedStateJob?.cancel()
+        getSavedStateJob = viewModelScope.launch {
+            _saveStateHandleUiState.update {
+                it.copy(saveStateHandle = SaveStateHandle.Loading)
+            }
+            val getSavedStateData = getSaveStateData.invoke()
+            if (getSavedStateData.isSuccess) {
+                _saveStateHandleUiState.update {
+                    it.copy(
+                        saveStateHandle = SaveStateHandle.Success(
+                            getSavedStateData.getOrThrow()
+                        )
+                    )
+                }
+
+            } else {
+                _saveStateHandleUiState.update {
+                    it.copy(saveStateHandle = SaveStateHandle.Error("There is a problem with getting saved Url"))
+                }
+            }
+        }
+    }
+
+    fun saveSavedState(saveState: SaveState) {
+        saveSavedStateJob?.cancel()
+        saveSavedStateJob = viewModelScope.launch {
+            if (saveStateData.invoke(saveState)) {
+                _saveStateHandleUiState.update {
+                    it.copy(showedSaveStateHandleAddedMessage = true)
+                }
+            }
+
+        }
+    }
+
+    fun addedSavedSateInfo() {
+        _saveStateHandleUiState.update {
+            it.copy(showedSaveStateHandleAddedMessage = false)
         }
     }
 }

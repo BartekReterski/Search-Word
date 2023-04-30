@@ -68,7 +68,7 @@
                 android:layout_alignEnd="@id/title"
                 android:layout_alignParentEnd="true"
                 android:contentDescription="@string/todo"
-                app:srcCompat="@drawable/ic_baseline_more_vert_24" />
+                app:srcCompat="@drawable/ic_baseline_more_vert_white_24" />
         </RelativeLayout>
 
     </androidx.cardview.widget.CardView>

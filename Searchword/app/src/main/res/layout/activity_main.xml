@@ -24,6 +24,7 @@
         android:layout_height="wrap_content"
         android:background="@color/blue_light"
         app:itemIconTint="@color/white"
+        android:visibility="gone"
         app:itemTextColor="@color/white"
         app:labelVisibilityMode="unlabeled"
         app:layout_constraintBottom_toBottomOf="parent"

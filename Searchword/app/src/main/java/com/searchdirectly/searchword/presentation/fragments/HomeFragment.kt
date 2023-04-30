@@ -11,20 +11,23 @@ import android.view.inputmethod.InputMethodManager
 import android.webkit.*
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.*
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.chip.Chip
+import com.searchdirectly.searchword.BuildConfig
 import com.searchdirectly.searchword.R
 import com.searchdirectly.searchword.databinding.FragmentHomeBinding
-import com.searchdirectly.searchword.domain.model.preferences.SharedPreferencesModel
 import com.searchdirectly.searchword.domain.model.room.SavedLinks
+import com.searchdirectly.searchword.domain.model.savestate.SaveState
 import com.searchdirectly.searchword.domain.model.websites.WebSites
 import com.searchdirectly.searchword.presentation.activities.SavedWebsitesActivity
-import com.searchdirectly.searchword.presentation.uistates.preferences.SharedPreferencesState
+import com.searchdirectly.searchword.presentation.uistates.savestate.SaveStateHandle
 import com.searchdirectly.searchword.presentation.uistates.websites.WebState
 import com.searchdirectly.searchword.presentation.viewmodels.room.SavedLinksViewModel
 import com.searchdirectly.searchword.presentation.viewmodels.websites.WebSiteViewModel
@@ -47,16 +50,10 @@ class HomeFragment : Fragment() {
     private lateinit var searchView: SearchView
 
     private val viewModel: WebSiteViewModel by viewModels()
-
-//    private val viewModel: WebSiteViewModel by viewModels {
-//        SavedStateViewModelFactory(activity?.applicationContext as Application, this)
-//    }
-
     private val viewModelSavedLinks: SavedLinksViewModel by viewModels()
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         activity?.title = getString(R.string.HomeFragmentTitle)
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
@@ -66,42 +63,29 @@ class HomeFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         try {
-            viewModel.getName()
-            Log.e("LISTA Z WARTOSCI", viewModel.getName()[0] + "     " + viewModel.getName()[1])
-            //viewModel.getSharedPreferences()
-            finalUrl = viewModel.getName()[0]
-            querySearch = viewModel.getName()[1]
-            binding.webview.loadUrl(finalUrl!!)
-            searchView.setQuery(querySearch, false)
+            getSaveState()
+            if (finalUrl != "null" || querySearch != "null") {
+                binding.webview.loadUrl(finalUrl!!)
+            }
 
         } catch (e: java.lang.Exception) {
             Log.e(
-                "Shared_Preferences_Error",
-                "Error regarding to save url address in Shared Preferences"
+                "Save_State_Handle_Error", "Error regarding to save temporary url and query"
             )
         }
     }
 
     override fun onPause() {
         super.onPause()
-        viewModel.saveName(binding.webview.url, searchView.query.toString())
-//        viewModel.saveSharedPreferences(
-//            SharedPreferencesModel(
-//                binding.webview.url,
-//                searchView.query.toString()
-//            )
-//        )
+        saveSaveState()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //resetSharedPreferences()
         setupMenu()
         setupChips()
         observeViewModel()
         preventBackButton()
-        //reference to ViewModel which is connected to this fragment
-        //viewModel = ViewModelProviders.of(this)[WebSiteViewModel::class.java]
     }
 
     private fun setupMenu() {
@@ -110,8 +94,7 @@ class HomeFragment : Fragment() {
                 menuInflater.inflate(R.menu.main_menu, menu)
                 val search = menu.findItem(R.id.action_search)
                 searchView = search?.actionView as SearchView
-                searchView.queryHint = getString(R.string.search_query_hint)
-
+                configSearchView(search)
                 searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                     override fun onQueryTextSubmit(query: String?): Boolean {
                         querySearch = query
@@ -121,9 +104,7 @@ class HomeFragment : Fragment() {
                             observeViewModel()
                         } else {
                             Toast.makeText(
-                                context,
-                                getString(R.string.what_to_do_info),
-                                Toast.LENGTH_LONG
+                                context, getString(R.string.what_to_do_info), Toast.LENGTH_LONG
                             ).show()
                         }
                         return false
@@ -136,13 +117,10 @@ class HomeFragment : Fragment() {
                 })
             }
 
-//            override fun onPrepareMenu(menu: Menu) {
-//                menu.findItem(R.id.action_more).isVisible = binding.webview.isVisible
-//            }
-
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
                     R.id.action_about -> {
+                        aboutAppAndRateDialog()
                         true
                     }
                     R.id.action_bookmark -> {
@@ -156,13 +134,20 @@ class HomeFragment : Fragment() {
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
+    private fun configSearchView(search: MenuItem) {
+        if (querySearch != "null" && querySearch!!.isEmpty().not()) {
+            searchView.queryHint = getString(R.string.search_query_hint)
+            search.expandActionView()
+            searchView.setQuery(querySearch, false)
+        }
+    }
+
     private fun observeViewModel() {
         //observe Website data from repository
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.webSitesUiState.distinctUntilChangedBy { it.listState }
-                    .map { it.listState }
-                    .collectLatest { webState ->
+                    .map { it.listState }.collectLatest { webState ->
                         when (webState) {
                             is WebState.Success -> {
                                 val website = webState.webSite
@@ -173,9 +158,7 @@ class HomeFragment : Fragment() {
                             }
                             is WebState.NoInternetConnection -> {
                                 Toast.makeText(
-                                    context,
-                                    R.string.no_internet_info,
-                                    Toast.LENGTH_SHORT
+                                    context, R.string.no_internet_info, Toast.LENGTH_SHORT
                                 ).show()
                             }
                             is WebState.Loading -> {}
@@ -184,40 +167,37 @@ class HomeFragment : Fragment() {
                     }
             }
         }
-        //observe saved url to shared preferences
+        //observe saved state url
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.sharedPreferencesUiState.distinctUntilChangedBy { it.showedSharedPreferencesAddedMessage }
+                viewModel.saveStateHandleUiState.distinctUntilChangedBy { it.showedSaveStateHandleAddedMessage }
                     .collectLatest {
-                        if (it.showedSharedPreferencesAddedMessage) {
-                            // Toast.makeText(context, "Saved SP", Toast.LENGTH_SHORT).show()
-                            viewModel.addedSharedPreferencesMessageInfo()
+                        if (it.showedSaveStateHandleAddedMessage) {
+                            viewModel.addedSavedSateInfo()
                         }
                     }
 
             }
         }
-        //observe getting url from shared preferences
+        //observe getting saved url from Saved State
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.sharedPreferencesUiState.distinctUntilChangedBy { it.sharedPreferenceState }
-                    .map { it.sharedPreferenceState }
-                    .collectLatest { sharedPreferences ->
-                        when (sharedPreferences) {
-                            is SharedPreferencesState.Success -> {
-                                val savedUrl = sharedPreferences.sharedPreferencesModel?.hyperLinkSp
-                                val savedQuery =
-                                    sharedPreferences.sharedPreferencesModel?.queryValueSp
+                viewModel.saveStateHandleUiState.distinctUntilChangedBy { it.saveStateHandle }
+                    .map { it.saveStateHandle }.collectLatest { savedState ->
+                        when (savedState) {
+                            is SaveStateHandle.Success -> {
+                                val savedUrl = savedState.saveState.hyperLink
+                                val savedQuery = savedState.saveState.queryValue
                                 if (savedUrl.isNullOrEmpty().not()) {
                                     finalUrl = savedUrl
                                     querySearch = savedQuery
                                 }
                             }
-                            is SharedPreferencesState.Error -> {
+                            is SaveStateHandle.Error -> {
                                 Log.e("Error state", "Getting URL from shared preferences")
                             }
-                            is SharedPreferencesState.Loading -> {}
-                            is SharedPreferencesState.Empty -> {}
+                            is SaveStateHandle.Loading -> {}
+                            is SaveStateHandle.Empty -> {}
                         }
                     }
             }
@@ -229,9 +209,7 @@ class HomeFragment : Fragment() {
                     .collectLatest {
                         if (it.showedAddedMessage) {
                             Toast.makeText(
-                                context,
-                                getString(R.string.saved_item_info),
-                                Toast.LENGTH_SHORT
+                                context, getString(R.string.saved_item_info), Toast.LENGTH_SHORT
                             ).show()
                             viewModelSavedLinks.addedMessageInfo()
                         }
@@ -285,8 +263,7 @@ class HomeFragment : Fragment() {
         }
 
         override fun shouldOverrideUrlLoading(
-            view: WebView?,
-            request: WebResourceRequest
+            view: WebView?, request: WebResourceRequest
         ): Boolean {
             val uri = request.url
             view?.loadUrl(uri.toString())
@@ -297,7 +274,6 @@ class HomeFragment : Fragment() {
         override fun onPageFinished(view: WebView, url: String) {
             super.onPageFinished(view, url)
             manipulateLayoutVisibilityOnPageFinished(view)
-
         }
     }
 
@@ -306,13 +282,20 @@ class HomeFragment : Fragment() {
         binding.webview.visibility = View.VISIBLE
         binding.textViewHelper.visibility = View.GONE
         binding.imageViewHelper.visibility = View.GONE
-//        if (binding.webview.isVisible) {
-//            val bottomNavigationView =
-//                requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation)
-//            bottomNavigationView.visibility = View.VISIBLE
-//            activity?.invalidateOptionsMenu()
-//        }
+        if (binding.webview.isVisible) {
+            showBottomNavigation(true)
+        }
         view.hideSoftInput()
+    }
+
+    private fun showBottomNavigation(show: Boolean) {
+        val bottomNavigationView =
+            requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        if (show) {
+            bottomNavigationView.visibility = View.VISIBLE
+        } else {
+            bottomNavigationView.visibility = View.GONE
+        }
     }
 
     private fun setupChips() {
@@ -323,16 +306,15 @@ class HomeFragment : Fragment() {
                         binding.chipGroup.findViewById<Chip>(binding.chipGroup.checkedChipId).text.toString()
                     if (selectedChipText == savedCurrentSiteName) {
                         observeViewModel()
-                        //resetSharedPreferences()
+                        resetSaveState()
                     }
-                    //resetSharedPreferences()
+                    resetSaveState()
+                    observeViewModel()
                     savedCurrentSiteName = selectedChipText
                     viewModel.getWebsiteDataByName(selectedChipText)
                 } else {
                     Toast.makeText(
-                        context,
-                        getString(R.string.what_to_do_info),
-                        Toast.LENGTH_LONG
+                        context, getString(R.string.what_to_do_info), Toast.LENGTH_LONG
                     ).show()
                     binding.chipGroup.clearCheck()
                 }
@@ -342,9 +324,17 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun resetSharedPreferences() {
-        viewModel.saveSharedPreferences(SharedPreferencesModel("", ""))
-        viewModel.getSharedPreferences()
+    private fun resetSaveState() {
+        viewModel.saveSavedState(SaveState("", ""))
+        viewModel.getSavedState()
+    }
+
+    private fun saveSaveState() {
+        viewModel.saveSavedState(SaveState(binding.webview.url, searchView.query.toString()))
+    }
+
+    private fun getSaveState() {
+        viewModel.getSavedState()
     }
 
     //hide keyboard
@@ -354,26 +344,23 @@ class HomeFragment : Fragment() {
         inputMethodManager.hideSoftInputFromWindow(windowToken, 0)
     }
 
-//    private fun Fragment.hideKeyboard() = ViewCompat.getWindowInsetsController(requireView())
-//        ?.hide(WindowInsetsCompat.Type.ime())
-
     fun closeWebView(context: Context) {
         if (binding.webview.isVisible) {
             view?.hideSoftInput()
             binding.webview.visibility = View.GONE
             binding.textViewHelper.visibility = View.VISIBLE
             binding.imageViewHelper.visibility = View.VISIBLE
-            binding.webview.destroy()
-            //searchView.setQuery("", false)
-            //hideKeyboard()
+            showBottomNavigation(false)
         }
     }
 
     fun refreshWebView(context: Context) {
-        if (binding.webview.isVisible) {
-            val url = binding.webview.url
+        val url = binding.webview.url
+        if (binding.webview.isVisible && url.isNullOrEmpty()) {
             binding.progressBarHorizontal.visibility = View.VISIBLE
             binding.webview.loadUrl(url!!)
+        } else {
+            Toast.makeText(context, R.string.no_internet_info, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -385,15 +372,12 @@ class HomeFragment : Fragment() {
                 putExtra(Intent.EXTRA_TEXT, shareUrl)
                 type = "text/plain"
             }
-
             val shareIntent = Intent.createChooser(sendIntent, null)
             startActivity(shareIntent)
             refreshWebView(requireContext())
         } else {
             Toast.makeText(
-                context,
-                R.string.share_info,
-                Toast.LENGTH_LONG
+                context, R.string.share_info, Toast.LENGTH_LONG
             ).show()
         }
     }
@@ -413,9 +397,7 @@ class HomeFragment : Fragment() {
             )
         } else {
             Toast.makeText(
-                context,
-                R.string.save_info,
-                Toast.LENGTH_LONG
+                context, R.string.save_info, Toast.LENGTH_LONG
             ).show()
         }
     }
@@ -423,23 +405,58 @@ class HomeFragment : Fragment() {
     fun openLinkInBrowser(context: Context) {
         if (finalUrl.isNullOrEmpty().not() && binding.webview.isVisible) {
             val urlIntent = Intent(
-                Intent.ACTION_VIEW,
-                Uri.parse(binding.webview.url)
+                Intent.ACTION_VIEW, Uri.parse(binding.webview.url)
             )
             startActivity(urlIntent)
         } else {
             Toast.makeText(
-                context,
-                R.string.open_in_browser,
-                Toast.LENGTH_LONG
+                context, R.string.open_in_browser, Toast.LENGTH_LONG
             ).show()
         }
     }
 
+    private fun aboutAppAndRateDialog() {
+
+        val dialogBuilder = AlertDialog.Builder(requireContext())
+        val versionCode = BuildConfig.VERSION_CODE
+        val versionName = BuildConfig.VERSION_NAME
+
+        dialogBuilder.setMessage("Application version: $versionName$versionCode\n\nIf you enjoy using the app would you mind taking a moment to rate it?")
+            .setCancelable(false).setPositiveButton(android.R.string.ok) { dialog, _ ->
+                dialog.cancel()
+            }.setNeutralButton("Rate app") { dialog, _ ->
+
+                val appPackage = requireActivity().packageName
+                try {
+                    startActivity(
+                        Intent(
+                            Intent.ACTION_VIEW, Uri.parse("market://details?id=$appPackage")
+                        )
+                    )
+                } catch (e: java.lang.Exception) {
+                    startActivity(
+                        Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse("https://play.google.com/store/apps/details?id=$appPackage")
+                        )
+                    )
+                }
+                dialog.cancel()
+            }
+
+        val alert = dialogBuilder.create()
+        alert.setTitle(R.string.app_name)
+
+        alert.show()
+        alert.getButton(AlertDialog.BUTTON_POSITIVE)
+            .setTextColor(requireContext().getColor(R.color.blue_light))
+        alert.getButton(AlertDialog.BUTTON_NEUTRAL)
+            .setTextColor(requireContext().getColor(R.color.blue_light))
+    }
+
     //device - back button
     private fun preventBackButton() {
-        requireActivity().onBackPressedDispatcher.addCallback(
-            viewLifecycleOwner,
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
                     backArrowButton(context = context!!)
@@ -449,8 +466,16 @@ class HomeFragment : Fragment() {
 
     //icon back button on bottom navigation bar
     fun backArrowButton(context: Context) {
-        if(binding.webview.isVisible){
-            if (binding.webview.canGoBack()) binding.webview.goBack()
+        if (binding.webview.canGoBack() && binding.webview.isVisible) binding.webview.goBack()
+        else if (!binding.webview.canGoBack() || binding.webview.isVisible) {
+            val builder = AlertDialog.Builder(context)
+            builder.setTitle(getString(R.string.exit_app))
+            builder.setMessage(getString(R.string.exit_app_confirm))
+            builder.setPositiveButton(android.R.string.ok) { _, _ ->
+                requireActivity().finish()
+            }
+            builder.setNegativeButton(android.R.string.cancel) { _, _ -> }
+            builder.show()
         }
     }
 

@@ -34,24 +34,23 @@ class MainActivity : AppCompatActivity() {
         loadFragment(HomeFragment())
         binding.bottomNavigation.setOnItemSelectedListener {
             when (it.itemId) {
-                R.id.action_home -> {
+                R.id.action_home_bottom_nav -> {
                     loadFragment(HomeFragment())
                     true
                 }
-                R.id.action_back -> {
+                R.id.action_back_bottom_nav -> {
                     homeFragment().backArrowButton(this)
                     true
                 }
-                R.id.action_close_browser -> {
-                   homeFragment().closeWebView(this)
-                    //loadFragment(HomeFragment())
+                R.id.action_close_browser_bottom_nav -> {
+                    homeFragment().closeWebView(this)
                     true
                 }
-                R.id.action_refresh -> {
+                R.id.action_refresh_bottom_nav -> {
                     homeFragment().refreshWebView(this)
                     true
                 }
-                R.id.action_more -> {
+                R.id.action_more_bottom_nav -> {
                     popupMenuSetup()
                     true
                 }
@@ -74,7 +73,7 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("DiscouragedPrivateApi")
     private fun popupMenuSetup() {
         val wrapper: Context = ContextThemeWrapper(this, R.style.CustomPopUpStyle)
-        val popupMenu = PopupMenu(wrapper, binding.bottomNavigation,Gravity.END)
+        val popupMenu = PopupMenu(wrapper, binding.bottomNavigation, Gravity.END)
         popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_share -> {
