@@ -84,8 +84,8 @@
                 style="@style/CustomStyleChip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/tiktok_name"
-                android:visibility="gone" />
+                android:visibility="gone"
+                android:text="@string/tiktok_name"/>
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/instagram_chip"
@@ -137,6 +137,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/amazon_name" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/aliexpress_chip"
+                style="@style/CustomStyleChip"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/aliexpress_name" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/ebay_chip"

@@ -13,13 +13,14 @@
         android:id="@+id/action_bookmark"
         android:icon="@drawable/ic_baseline_bookmark_24"
         android:title="@string/saved_websites_menu"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/action_more"
         android:icon="@drawable/ic_baseline_more_vert_white_24"
         android:title="@string/more_menu"
-        app:showAsAction="always">
+        app:showAsAction="always"
+        tools:ignore="AlwaysShowAction">
         <menu>
 
             <item

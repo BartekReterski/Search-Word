@@ -14,7 +14,7 @@
     //app info
     <string name="action_menu_back">Back</string>
     <string name="todo">TODO</string>
-    <string name="no_internet_info">Something was wrong, Please check your internet connection</string>
+    <string name="no_internet_info">Please check your internet connection</string>
     <string name="what_to_do_info">Please type the search phrase and choose a website to search for it</string>
     <string name="share_info">There is a problem with share link. Please try when search text is not empty and browser is visible</string>
     <string name="Shared_pref_id">MySharedPref</string>
@@ -90,4 +90,9 @@
     <string name="netflix_endpoint">q=</string>
     <string name="spotify_value">https://open.spotify.com/search/results/</string>
     <string name="google_maps_value">https://google.com/maps/search/</string>
+    <string name="tiktok_value">https://www.tiktok.com/search?</string>
+    <string name="tiktok_endpoint">q=</string>
+    <string name="aliexpress_name">AlieExpress</string>
+    <string name="aliexpress_value">https://pl.aliexpress.com/w/wholesale-</string>
+    <string name="aliexpress_endpoint">-</string>
 </resources>

@@ -20,6 +20,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.*
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.chip.Chip
+import com.searchdirectly.searchword.BuildConfig
 import com.searchdirectly.searchword.R
 import com.searchdirectly.searchword.databinding.FragmentHomeBinding
 import com.searchdirectly.searchword.domain.model.room.SavedLinks
@@ -52,8 +53,7 @@ class HomeFragment : Fragment() {
     private val viewModelSavedLinks: SavedLinksViewModel by viewModels()
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         activity?.title = getString(R.string.HomeFragmentTitle)
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
@@ -70,8 +70,7 @@ class HomeFragment : Fragment() {
 
         } catch (e: java.lang.Exception) {
             Log.e(
-                "Save_State_Handle_Error",
-                "Error regarding to save temporary url and query"
+                "Save_State_Handle_Error", "Error regarding to save temporary url and query"
             )
         }
     }
@@ -95,8 +94,7 @@ class HomeFragment : Fragment() {
                 menuInflater.inflate(R.menu.main_menu, menu)
                 val search = menu.findItem(R.id.action_search)
                 searchView = search?.actionView as SearchView
-                search.expandActionView()
-                //configSearchView(search)
+                configSearchView(search)
                 searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                     override fun onQueryTextSubmit(query: String?): Boolean {
                         querySearch = query
@@ -106,9 +104,7 @@ class HomeFragment : Fragment() {
                             observeViewModel()
                         } else {
                             Toast.makeText(
-                                context,
-                                getString(R.string.what_to_do_info),
-                                Toast.LENGTH_LONG
+                                context, getString(R.string.what_to_do_info), Toast.LENGTH_LONG
                             ).show()
                         }
                         return false
@@ -124,6 +120,7 @@ class HomeFragment : Fragment() {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
                     R.id.action_about -> {
+                        aboutAppAndRateDialog()
                         true
                     }
                     R.id.action_bookmark -> {
@@ -150,8 +147,7 @@ class HomeFragment : Fragment() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.webSitesUiState.distinctUntilChangedBy { it.listState }
-                    .map { it.listState }
-                    .collectLatest { webState ->
+                    .map { it.listState }.collectLatest { webState ->
                         when (webState) {
                             is WebState.Success -> {
                                 val website = webState.webSite
@@ -162,9 +158,7 @@ class HomeFragment : Fragment() {
                             }
                             is WebState.NoInternetConnection -> {
                                 Toast.makeText(
-                                    context,
-                                    R.string.no_internet_info,
-                                    Toast.LENGTH_SHORT
+                                    context, R.string.no_internet_info, Toast.LENGTH_SHORT
                                 ).show()
                             }
                             is WebState.Loading -> {}
@@ -190,8 +184,7 @@ class HomeFragment : Fragment() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.saveStateHandleUiState.distinctUntilChangedBy { it.saveStateHandle }
-                    .map { it.saveStateHandle }
-                    .collectLatest { savedState ->
+                    .map { it.saveStateHandle }.collectLatest { savedState ->
                         when (savedState) {
                             is SaveStateHandle.Success -> {
                                 val savedUrl = savedState.saveState.hyperLink
@@ -217,9 +210,7 @@ class HomeFragment : Fragment() {
                     .collectLatest {
                         if (it.showedAddedMessage) {
                             Toast.makeText(
-                                context,
-                                getString(R.string.saved_item_info),
-                                Toast.LENGTH_SHORT
+                                context, getString(R.string.saved_item_info), Toast.LENGTH_SHORT
                             ).show()
                             viewModelSavedLinks.addedMessageInfo()
                         }
@@ -273,8 +264,7 @@ class HomeFragment : Fragment() {
         }
 
         override fun shouldOverrideUrlLoading(
-            view: WebView?,
-            request: WebResourceRequest
+            view: WebView?, request: WebResourceRequest
         ): Boolean {
             val uri = request.url
             view?.loadUrl(uri.toString())
@@ -320,13 +310,12 @@ class HomeFragment : Fragment() {
                         resetSaveState()
                     }
                     resetSaveState()
+                    observeViewModel()
                     savedCurrentSiteName = selectedChipText
                     viewModel.getWebsiteDataByName(selectedChipText)
                 } else {
                     Toast.makeText(
-                        context,
-                        getString(R.string.what_to_do_info),
-                        Toast.LENGTH_LONG
+                        context, getString(R.string.what_to_do_info), Toast.LENGTH_LONG
                     ).show()
                     binding.chipGroup.clearCheck()
                 }
@@ -367,10 +356,12 @@ class HomeFragment : Fragment() {
     }
 
     fun refreshWebView(context: Context) {
-        if (binding.webview.isVisible) {
-            val url = binding.webview.url
+        val url = binding.webview.url
+        if (binding.webview.isVisible && url.isNullOrEmpty()) {
             binding.progressBarHorizontal.visibility = View.VISIBLE
             binding.webview.loadUrl(url!!)
+        } else {
+            Toast.makeText(context, R.string.no_internet_info, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -388,9 +379,7 @@ class HomeFragment : Fragment() {
             refreshWebView(requireContext())
         } else {
             Toast.makeText(
-                context,
-                R.string.share_info,
-                Toast.LENGTH_LONG
+                context, R.string.share_info, Toast.LENGTH_LONG
             ).show()
         }
     }
@@ -410,9 +399,7 @@ class HomeFragment : Fragment() {
             )
         } else {
             Toast.makeText(
-                context,
-                R.string.save_info,
-                Toast.LENGTH_LONG
+                context, R.string.save_info, Toast.LENGTH_LONG
             ).show()
         }
     }
@@ -420,23 +407,58 @@ class HomeFragment : Fragment() {
     fun openLinkInBrowser(context: Context) {
         if (finalUrl.isNullOrEmpty().not() && binding.webview.isVisible) {
             val urlIntent = Intent(
-                Intent.ACTION_VIEW,
-                Uri.parse(binding.webview.url)
+                Intent.ACTION_VIEW, Uri.parse(binding.webview.url)
             )
             startActivity(urlIntent)
         } else {
             Toast.makeText(
-                context,
-                R.string.open_in_browser,
-                Toast.LENGTH_LONG
+                context, R.string.open_in_browser, Toast.LENGTH_LONG
             ).show()
         }
     }
 
+    private fun aboutAppAndRateDialog() {
+
+        val dialogBuilder = AlertDialog.Builder(requireContext())
+        val versionCode = BuildConfig.VERSION_CODE
+        val versionName = BuildConfig.VERSION_NAME
+
+        dialogBuilder.setMessage("Application version: $versionName$versionCode\n\nIf you enjoy using the app would you mind taking a moment to rate it?")
+            .setCancelable(false).setPositiveButton(android.R.string.ok) { dialog, _ ->
+                dialog.cancel()
+            }.setNeutralButton("Rate app") { dialog, _ ->
+
+                val appPackage = requireActivity().packageName
+                try {
+                    startActivity(
+                        Intent(
+                            Intent.ACTION_VIEW, Uri.parse("market://details?id=$appPackage")
+                        )
+                    )
+                } catch (e: java.lang.Exception) {
+                    startActivity(
+                        Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse("https://play.google.com/store/apps/details?id=$appPackage")
+                        )
+                    )
+                }
+                dialog.cancel()
+            }
+
+        val alert = dialogBuilder.create()
+        alert.setTitle(R.string.app_name)
+
+        alert.show()
+        alert.getButton(AlertDialog.BUTTON_POSITIVE)
+            .setTextColor(requireContext().getColor(R.color.blue_light))
+        alert.getButton(AlertDialog.BUTTON_NEUTRAL)
+            .setTextColor(requireContext().getColor(R.color.blue_light))
+    }
+
     //device - back button
     private fun preventBackButton() {
-        requireActivity().onBackPressedDispatcher.addCallback(
-            viewLifecycleOwner,
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
                     backArrowButton(context = context!!)

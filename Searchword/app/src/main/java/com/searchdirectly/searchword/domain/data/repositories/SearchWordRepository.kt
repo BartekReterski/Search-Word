@@ -89,6 +89,13 @@ class SearchWordRepository @Inject constructor(
         )
         list.add(
             WebSites(
+                context.getString(R.string.tiktok_name),
+                context.getString(R.string.tiktok_value),
+                context.getString(R.string.tiktok_endpoint)
+            )
+        )
+        list.add(
+            WebSites(
                 context.getString(R.string.spotify_name),
                 context.getString(R.string.spotify_value),
                 ""
@@ -123,6 +130,15 @@ class SearchWordRepository @Inject constructor(
                 context.getString(R.string.amazon_value),
                 context.getString(
                     R.string.amazon_endpoint
+                )
+            )
+        )
+        list.add(
+            WebSites(
+                context.getString(R.string.aliexpress_name),
+                context.getString(R.string.aliexpress_value),
+                context.getString(
+                    R.string.aliexpress_endpoint
                 )
             )
         )
