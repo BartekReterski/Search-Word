@@ -46,27 +46,21 @@ class WebSiteViewModel @Inject constructor(
     private var saveSavedStateJob: Job? = null
 
     fun getWebsiteDataByName(webSiteName: String) {
-        if (isNetworkAvailable(context)) {
-            getWebSiteByNameJob?.cancel()
-            getWebSiteByNameJob = viewModelScope.launch {
-                _webSitesUiState.update {
-                    it.copy(listState = WebState.Loading)
-                }
-                val website = getWebSiteByName.invoke(webSiteName)
-                if (website.isSuccess) {
-                    _webSitesUiState.update {
-                        it.copy(listState = WebState.Success(website.getOrThrow()))
-                    }
-
-                } else {
-                    _webSitesUiState.update {
-                        it.copy(listState = WebState.Error("There is a problem with pass WebSiteName"))
-                    }
-                }
-            }
-        } else {
+        getWebSiteByNameJob?.cancel()
+        getWebSiteByNameJob = viewModelScope.launch {
             _webSitesUiState.update {
-                it.copy(listState = WebState.NoInternetConnection("No internet connection"))
+                it.copy(listState = WebState.Loading)
+            }
+            val website = getWebSiteByName.invoke(webSiteName)
+            if (website.isSuccess) {
+                _webSitesUiState.update {
+                    it.copy(listState = WebState.Success(website.getOrThrow()))
+                }
+
+            } else {
+                _webSitesUiState.update {
+                    it.copy(listState = WebState.Error("There is a problem with pass WebSiteName"))
+                }
             }
         }
     }
