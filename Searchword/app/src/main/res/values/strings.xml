@@ -30,6 +30,7 @@
     <string name="saved_item_info">Web link saved successfully</string>
     <string name="link_removed">Link removed successfully</string>
     <string name="delete_string">Delete</string>
+    <string name="cancel_string">Cancel</string>
     <string name="copied_to_clipboard">Copied to clipboard</string>
     <string name="delete_dialog_title">Delete link</string>
     <string name="delete_dialog_confirmation">Do you want to delete link? \n"</string>
@@ -43,6 +44,7 @@
     <string name="action_menu_forward">Forward</string>
     <string name="exit_app">Exit app</string>
     <string name="exit_app_confirm">Do you really want to close app?</string>
+    <string name="rate_app_info">Rate app</string>
     //websites names, values and queries
     <string name="google_name">Google</string>
     <string name="yahoo_name">Yahoo</string>
@@ -95,4 +97,10 @@
     <string name="aliexpress_name">AlieExpress</string>
     <string name="aliexpress_value">https://pl.aliexpress.com/w/wholesale-</string>
     <string name="aliexpress_endpoint">-</string>
+    <string name="google_image_name">Image search</string>
+    <string name="quora_name">Quora</string>
+    <string name="google_image_value"><![CDATA[https://www.google.com/search?tbm=isch&]]></string>
+    <string name="google_image_endpoint">q=</string>
+    <string name="quora_value">https://www.quora.com/search?</string>
+    <string name="quora_endpoint">q=</string>
 </resources>

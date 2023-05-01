@@ -28,6 +28,15 @@ class SearchWordRepository @Inject constructor(
         )
         list.add(
             WebSites(
+                context.getString(R.string.google_image_name),
+                context.getString(R.string.google_image_value),
+                context.getString(
+                    R.string.google_image_endpoint
+                )
+            )
+        )
+        list.add(
+            WebSites(
                 context.getString(R.string.bing_name),
                 context.getString(R.string.bing_value),
                 context.getString(
@@ -114,6 +123,15 @@ class SearchWordRepository @Inject constructor(
                 context.getString(R.string.reddit_value),
                 context.getString(
                     R.string.reddit_endpoint
+                )
+            )
+        )
+        list.add(
+            WebSites(
+                context.getString(R.string.quora_name),
+                context.getString(R.string.quora_value),
+                context.getString(
+                    R.string.quora_endpoint
                 )
             )
         )

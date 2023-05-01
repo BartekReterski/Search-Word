@@ -119,7 +119,6 @@ class WebSiteViewModel @Inject constructor(
                     it.copy(showedSaveStateHandleAddedMessage = true)
                 }
             }
-
         }
     }
 

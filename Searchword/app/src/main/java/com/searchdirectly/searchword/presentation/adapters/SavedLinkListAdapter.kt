@@ -125,7 +125,8 @@ class SavedLinkListAdapter(var savedLinks: ArrayList<SavedLinks>) :
         it: View,
         savedLinks: SavedLinks
     ) {
-        val builder = AlertDialog.Builder(it.context)
+        val builder =
+            AlertDialog.Builder(ContextThemeWrapper(it.context, R.style.AlertDialogCustom))
         builder.setTitle(it.context.getString(R.string.delete_dialog_title))
         builder.setMessage(it.context.getString(R.string.delete_dialog_confirmation) + savedLinks.title)
 
@@ -133,8 +134,7 @@ class SavedLinkListAdapter(var savedLinks: ArrayList<SavedLinks>) :
             (it.context as SavedWebsitesActivity).removeLinkFromDatabase(savedLinks)
             // Toast.makeText(it.context, it.context.getString(R.string.deleted_info), Toast.LENGTH_SHORT).show()
         }
-
-        builder.setNegativeButton(android.R.string.cancel) { _, _ -> }
+        builder.setNegativeButton(R.string.cancel_string) { _, _ -> }
 
         builder.show()
     }

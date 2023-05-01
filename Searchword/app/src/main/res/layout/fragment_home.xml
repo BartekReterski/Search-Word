@@ -37,6 +37,13 @@
                 android:text="@string/google_name" />
 
             <com.google.android.material.chip.Chip
+                android:id="@+id/google_image_search_chip"
+                style="@style/CustomStyleChip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/google_image_name" />
+
+            <com.google.android.material.chip.Chip
                 android:id="@+id/bing_chip"
                 style="@style/CustomStyleChip"
                 android:layout_width="wrap_content"
@@ -84,8 +91,8 @@
                 style="@style/CustomStyleChip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:text="@string/tiktok_name"/>
+                android:text="@string/tiktok_name"
+                android:visibility="gone" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/instagram_chip"
@@ -97,18 +104,18 @@
             <com.google.android.material.chip.Chip
                 android:id="@+id/netflix_chip"
                 style="@style/CustomStyleChip"
-                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/netflix_name" />
+                android:text="@string/netflix_name"
+                android:visibility="gone" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/spotify_chip"
                 style="@style/CustomStyleChip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:text="@string/spotify_name" />
+                android:text="@string/spotify_name"
+                android:visibility="gone" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/google_maps"
@@ -123,6 +130,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/reddit_name" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/quora_chip"
+                style="@style/CustomStyleChip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/quora_name" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/wikipedia_chip"
@@ -141,10 +155,10 @@
             <com.google.android.material.chip.Chip
                 android:id="@+id/aliexpress_chip"
                 style="@style/CustomStyleChip"
-                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/aliexpress_name" />
+                android:text="@string/aliexpress_name"
+                android:visibility="gone" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/ebay_chip"

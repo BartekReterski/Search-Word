@@ -38,7 +38,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.text.DateFormat
 
-
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
 
@@ -417,14 +416,15 @@ class HomeFragment : Fragment() {
 
     private fun aboutAppAndRateDialog() {
 
-        val dialogBuilder = AlertDialog.Builder(requireContext())
+        val dialogBuilder =
+            AlertDialog.Builder(ContextThemeWrapper(context, R.style.AlertDialogCustom))
         val versionCode = BuildConfig.VERSION_CODE
         val versionName = BuildConfig.VERSION_NAME
 
         dialogBuilder.setMessage("Application version: $versionName$versionCode\n\nIf you enjoy using the app would you mind taking a moment to rate it?")
             .setCancelable(false).setPositiveButton(android.R.string.ok) { dialog, _ ->
                 dialog.cancel()
-            }.setNeutralButton("Rate app") { dialog, _ ->
+            }.setNeutralButton(getString(R.string.rate_app_info)) { dialog, _ ->
 
                 val appPackage = requireActivity().packageName
                 try {
@@ -446,12 +446,7 @@ class HomeFragment : Fragment() {
 
         val alert = dialogBuilder.create()
         alert.setTitle(R.string.app_name)
-
         alert.show()
-        alert.getButton(AlertDialog.BUTTON_POSITIVE)
-            .setTextColor(requireContext().getColor(R.color.blue_light))
-        alert.getButton(AlertDialog.BUTTON_NEUTRAL)
-            .setTextColor(requireContext().getColor(R.color.blue_light))
     }
 
     //device - back button
@@ -468,7 +463,8 @@ class HomeFragment : Fragment() {
     fun backArrowButton(context: Context) {
         if (binding.webview.canGoBack() && binding.webview.isVisible) binding.webview.goBack()
         else if (!binding.webview.canGoBack() || binding.webview.isVisible) {
-            val builder = AlertDialog.Builder(context)
+            val builder =
+                AlertDialog.Builder(ContextThemeWrapper(context, R.style.AlertDialogCustom))
             builder.setTitle(getString(R.string.exit_app))
             builder.setMessage(getString(R.string.exit_app_confirm))
             builder.setPositiveButton(android.R.string.ok) { _, _ ->
