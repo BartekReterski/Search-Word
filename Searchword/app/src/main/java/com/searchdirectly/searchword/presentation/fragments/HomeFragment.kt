@@ -355,7 +355,7 @@ class HomeFragment : Fragment() {
 
     fun refreshWebView(context: Context) {
         val url = binding.webview.url
-        if (binding.webview.isVisible && url.isNullOrEmpty()) {
+        if (binding.webview.isVisible && url.isNullOrEmpty().not()) {
             binding.progressBarHorizontal.visibility = View.VISIBLE
             binding.webview.loadUrl(url!!)
         } else {
