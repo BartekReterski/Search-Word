@@ -35,4 +35,14 @@
         <item name="android:textColor">@android:color/white</item>
         <item name="android:itemBackground">@color/blue_light</item>
     </style>
+
+    <style name="AlertDialogCustom" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <!-- Used for the buttons -->
+        <item name="colorAccent">@color/green_700</item>
+        <!-- Used for the title and text -->
+        <item name="android:textColorPrimary">@color/white</item>
+        <!-- Used for the background -->
+        <item name="android:background">@color/blue_light</item>
+    </style>
+
 </resources>
