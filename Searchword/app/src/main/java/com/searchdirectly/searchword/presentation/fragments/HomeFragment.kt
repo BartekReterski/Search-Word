@@ -329,7 +329,9 @@ class HomeFragment : Fragment() {
     }
 
     private fun saveSaveState() {
-        viewModel.saveSavedState(SaveState(binding.webview.url, searchView.query.toString()))
+        if(this::searchView.isInitialized){
+            viewModel.saveSavedState(SaveState(binding.webview.url, searchView.query.toString()))
+        }
     }
 
     private fun getSaveState() {
